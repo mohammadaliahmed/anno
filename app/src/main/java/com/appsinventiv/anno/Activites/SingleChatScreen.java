@@ -32,6 +32,7 @@ import com.appsinventiv.anno.Utils.Constants;
 import com.appsinventiv.anno.Utils.NotificationAsync;
 import com.appsinventiv.anno.Utils.NotificationObserver;
 import com.appsinventiv.anno.Utils.SharedPrefs;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -253,6 +254,13 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
                     if (groupModel != null) {
                         groupNameTv.setText(groupModel.getName());
                     }
+
+                    try {
+                        Glide.with(SingleChatScreen.this).load(groupModel.getPicUrl()).placeholder(R.drawable.profile).into(groupImage);
+                    } catch (Exception e) {
+
+                    }
+
                     for (String phone : groupModel.getMembers().values()) {
                         getMembersFromServer(phone);
                     }

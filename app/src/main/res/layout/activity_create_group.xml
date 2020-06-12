@@ -16,6 +16,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="10dp"
+            android:id="@+id/pickImage"
             android:src="@drawable/ic_pick" />
 
         <com.google.android.material.textfield.TextInputLayout

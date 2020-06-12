@@ -1,7 +1,6 @@
-package com.appsinventiv.buyandsell.Utils;
+package com.appsinventiv.anno.Utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +11,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,12 +21,12 @@ import java.io.IOException;
  * Created by AliAh on 08/04/2018.
  */
 
-public class CompressImage {
+public class CompressImageToThumnail {
     /*
      * Compressing pictures
      *
      * */
-    private CompressImage(){
+    private CompressImageToThumnail() {
 
     }
 
@@ -45,8 +43,8 @@ public class CompressImage {
 
             int actualHeight = options.outHeight;
             int actualWidth = options.outWidth;
-            float maxHeight = 816.0f;
-            float maxWidth = 612.0f;
+            float maxHeight = 300.0f;
+            float maxWidth = 300.0f;
             float imgRatio = actualWidth / actualHeight;
             float maxRatio = maxWidth / maxHeight;
 
@@ -147,7 +145,7 @@ public class CompressImage {
         if (!file.exists()) {
             file.mkdirs();
         }
-        String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".png");
+        String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
         return uriSting;
 
     }

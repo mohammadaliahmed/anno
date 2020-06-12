@@ -15,6 +15,7 @@ import com.appsinventiv.anno.Models.MessageModel;
 import com.appsinventiv.anno.Models.UserModel;
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -54,6 +55,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         holder.name.setText(model.getName());
         holder.message.setText(model.getText());
         holder.time.setText(CommonUtils.getFormattedTime(model.getTime()));
+        try {
+            Glide.with(context).load(model.getPicUrl()).placeholder(R.drawable.profile).into(holder.image);
+        } catch (Exception e) {
+
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

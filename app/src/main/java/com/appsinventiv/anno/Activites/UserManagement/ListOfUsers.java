@@ -1,10 +1,15 @@
 package com.appsinventiv.anno.Activites.UserManagement;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,10 +34,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +52,7 @@ public class ListOfUsers extends AppCompatActivity {
     HashMap<String, UserModel> userMap = new HashMap<>();
     public static HashMap<String, String> selectedMap = new HashMap<>();
     ImageView next;
+    private ArrayList<String> phoneList = new ArrayList<>();
 
 
     @Override
@@ -53,6 +61,7 @@ public class ListOfUsers extends AppCompatActivity {
         setContentView(R.layout.activity_list_of_users);
         recyclerview = findViewById(R.id.recyclerview);
         next = findViewById(R.id.next);
+        getPermissions();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         if (getSupportActionBar() != null) {
@@ -95,7 +104,9 @@ public class ListOfUsers extends AppCompatActivity {
             }
         });
         recyclerview.setAdapter(adapter);
-        getDataFromServer();
+        if (phoneList.size() > 0) {
+            getDataFromServer();
+        }
 
     }
 
@@ -108,7 +119,10 @@ public class ListOfUsers extends AppCompatActivity {
                         UserModel model = snapshot.getValue(UserModel.class);
                         if (model != null) {
                             if (!model.getPhone().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
-                                userMap.put(snapshot.getKey(), model);
+                                String abc = model.getPhone().substring(model.getPhone().length() - 8);
+                                if (phoneList.contains(abc)) {
+                                    userMap.put(snapshot.getKey(), model);
+                                }
                             }
                         }
                     }
@@ -122,6 +136,50 @@ public class ListOfUsers extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void getDataFromDB() {
+        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        while (phones.moveToNext()) {
+            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            if(phoneNumber.length()>8) {
+                String abc = phoneNumber.substring(phoneNumber.length() - 8);
+
+                phoneList.add(abc);
+            }
+
+        }
+        phones.close();
+    }
+
+    private void getPermissions() {
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                Manifest.permission.READ_CONTACTS,
+
+
+        };
+
+        if (!hasPermissions(ListOfUsers.this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        } else {
+            getDataFromDB();
+        }
+    }
+
+
+    public boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                } else {
+
+                }
+            }
+        }
+        return true;
     }
 
     @Override
