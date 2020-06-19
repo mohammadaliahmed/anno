@@ -97,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:id="@+id/sendAgain"
             android:padding="5dp"
             android:text="Send Again"
             android:textColor="@color/colorAccent" />

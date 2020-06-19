@@ -2,6 +2,7 @@ package com.appsinventiv.anno.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appsinventiv.anno.Activites.NativeAds.NativeTemplateStyle;
+import com.appsinventiv.anno.Activites.NativeAds.TemplateView;
 import com.appsinventiv.anno.Activites.SingleChatScreen;
 import com.appsinventiv.anno.Models.GroupModel;
 import com.appsinventiv.anno.Models.MessageModel;
@@ -17,15 +20,29 @@ import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
 import com.bumptech.glide.Glide;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.NativeAdOptions;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
+    private static final int AD_TYPE = 1;
+    private static final int CONTENT_TYPE = 0;
+    private static final int LIST_AD_DELTA = 5;
+
     Context context;
     ArrayList<GroupModel> itemList;
     ChatListAdapterCallback callback;
+
 
     public ChatListAdapter(Context context, ArrayList<GroupModel> itemList, ChatListAdapterCallback callback) {
         this.context = context;
@@ -41,46 +58,114 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_item_layout, parent, false);
-        ChatListAdapter.ViewHolder viewHolder = new ChatListAdapter.ViewHolder(view);
+
+
+        ChatListAdapter.ViewHolder viewHolder;
+        if (viewType == CONTENT_TYPE) {
+            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_layout, parent, false);
+            viewHolder = new ChatListAdapter.ViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(context).inflate(R.layout.google_ad_layout, parent, false);
+            viewHolder = new ChatListAdapter.ViewHolder(view);
+        }
 
         return viewHolder;
+
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        final GroupModel model = itemList.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        int viewType = getItemViewType(position);
+
+        switch (viewType) {
+            case CONTENT_TYPE:
+//                final GroupModel model = itemList.get(position);
+                final GroupModel model = itemList.get(getRealPosition(position));
+
+                holder.name.setText(model.getName());
+                holder.message.setText(model.getText());
+                holder.time.setText(CommonUtils.getFormattedTime(model.getTime()));
+                try {
+                    Glide.with(context).load(model.getPicUrl()).placeholder(R.drawable.profile).into(holder.image);
+                } catch (Exception e) {
+
+                }
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, SingleChatScreen.class);
+                        intent.putExtra("groupId", model.getId());
+                        intent.putExtra("groupName", model.getName());
+                        context.startActivity(intent);
+
+                    }
+                });
+                break;
+            case AD_TYPE:
+//                AdRequest adRequest = new AdRequest.Builder().build();
+//                holder.adView.loadAd(adRequest);
+                String adId = "ca-app-pub-5349923547931941/3486006875";
+                String testAdId = "ca-app-pub-3940256099942544/2247696110";
+                String adToShow = testAdId;
+                MobileAds.initialize(context, adToShow);
+                AdLoader adLoader = new AdLoader.Builder(context, adToShow)
+                        .forUnifiedNativeAd(new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
+                            @Override
+                            public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                                ColorDrawable colorDrawable = new ColorDrawable(ContextCompat.getColor(context, R.color.colorPrimary));
 
 
-        holder.name.setText(model.getName());
-        holder.message.setText(model.getText());
-        holder.time.setText(CommonUtils.getFormattedTime(model.getTime()));
-        try {
-            Glide.with(context).load(model.getPicUrl()).placeholder(R.drawable.profile).into(holder.image);
-        } catch (Exception e) {
+                                NativeTemplateStyle styles = new
+                                        NativeTemplateStyle.Builder().withMainBackgroundColor(colorDrawable).build();
 
+                                holder.template.setStyles(styles);
+                                holder.template.setNativeAd(unifiedNativeAd);
+
+                            }
+                        })
+                        .build();
+
+                adLoader.loadAd(new AdRequest.Builder().build());
+
+                break;
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, SingleChatScreen.class);
-                intent.putExtra("groupId", model.getId());
-                intent.putExtra("groupName", model.getName());
-                context.startActivity(intent);
 
-            }
-        });
+    }
+
+    private int getRealPosition(int position) {
+        if (LIST_AD_DELTA == 0) {
+            return position;
+        } else {
+            return position - position / LIST_AD_DELTA;
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position > 0 && position % LIST_AD_DELTA == 0)
+            return AD_TYPE;
+        return CONTENT_TYPE;
     }
 
     @Override
     public int getItemCount() {
-        return itemList.size();
+//        return itemList.size();
+        int additionalContent = 0;
+        if (itemList.size() > 0 && LIST_AD_DELTA > 0 && itemList.size() > LIST_AD_DELTA) {
+            additionalContent = itemList.size() / LIST_AD_DELTA;
+        }
+        return itemList.size() + additionalContent;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView name, message, time;
+
+        AdView adView;
+        TemplateView template;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -89,6 +174,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             image = itemView.findViewById(R.id.image);
             message = itemView.findViewById(R.id.message);
             time = itemView.findViewById(R.id.time);
+            adView = itemView.findViewById(R.id.adView);
+            template = itemView.findViewById(R.id.my_template);
         }
     }
 

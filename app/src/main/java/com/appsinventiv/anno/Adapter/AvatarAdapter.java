@@ -25,6 +25,10 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
         this.callback = callback;
     }
 
+    public void setSelected(int selected) {
+        this.selected = selected;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -39,14 +43,16 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         final String name = avatarList.get(position);
-        if (name.equalsIgnoreCase("man1")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.man1));
-        } else if (name.equalsIgnoreCase("man2")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.man2));
-        } else if (name.equalsIgnoreCase("girl1")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.girl1));
-        } else if (name.equalsIgnoreCase("girl2")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.girl2));
+        if (name.equalsIgnoreCase("avatar1")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar1));
+        } else if (name.equalsIgnoreCase("avatar2")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar2));
+        } else if (name.equalsIgnoreCase("avatar3")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar3));
+        } else if (name.equalsIgnoreCase("avatar4")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar4));
+        }else if (name.equalsIgnoreCase("avatar5")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar5));
         }
         if (selected == position) {
             holder.tick.setVisibility(View.VISIBLE);

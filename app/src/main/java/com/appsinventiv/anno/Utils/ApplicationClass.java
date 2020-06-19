@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.StrictMode;
 
 import com.google.firebase.FirebaseApp;
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
 
 /**
@@ -29,6 +31,8 @@ public class ApplicationClass extends Application {
         instance = this;
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
+        EmojiManager.install(new GoogleEmojiProvider());
+
     }
 
 

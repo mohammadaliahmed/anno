@@ -53,17 +53,20 @@ public class GroupInfoUserList extends RecyclerView.Adapter<GroupInfoUserList.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final UserModel model = itemList.get(position);
-        if (model.getAvatar().equalsIgnoreCase("man1")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.man1));
-        } else if (model.getAvatar().equalsIgnoreCase("man2")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.man2));
-        } else if (model.getAvatar().equalsIgnoreCase("girl1")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.girl1));
-        } else if (model.getAvatar().equalsIgnoreCase("girl2")) {
-            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.girl2));
+        if (model.getAvatar().equalsIgnoreCase("avatar1")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar1));
+        } else if (model.getAvatar().equalsIgnoreCase("avatar2")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar2));
+        } else if (model.getAvatar().equalsIgnoreCase("avatar3")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar3));
+        } else if (model.getAvatar().equalsIgnoreCase("avatar4")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar4));
+        } else if (model.getAvatar().equalsIgnoreCase("avatar5")) {
+            holder.image.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar5));
         }
 
-        holder.name.setText(model.getName());
+//        holder.name.setText(model.getName());
+        holder.name.setText(SharedPrefs.getPhoneContactsName().get(model.getPhone().substring(model.getPhone().length() - 8)));
 
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

@@ -44,12 +44,13 @@ public class CreateProfile extends AppCompatActivity {
         wholeLayout = findViewById(R.id.wholeLayout);
         create = findViewById(R.id.create);
         recyclerview = findViewById(R.id.recyclerview);
-        avatarList.add("man1");
-        avatarList.add("man2");
-        avatarList.add("girl1");
-        avatarList.add("girl2");
+        avatarList.add("avatar1");
+        avatarList.add("avatar2");
+        avatarList.add("avatar3");
+        avatarList.add("avatar4");
+        avatarList.add("avatar5");
 
-        recyclerview.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerview.setLayoutManager(new GridLayoutManager(this, 3));
         adapter = new AvatarAdapter(this, avatarList, new AvatarAdapter.AvatarAdapterCallback() {
             @Override
             public void onSelected(String name) {

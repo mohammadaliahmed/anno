@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 
+import com.appsinventiv.anno.Models.GroupModel;
 import com.appsinventiv.anno.Models.MessageModel;
 import com.appsinventiv.anno.Models.UserModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class SharedPrefs {
         return preferenceGetter("muted");
     }
 
-//    public static void setPickedList(ArrayList<StoriesPickedModel> itemList) {
+    //    public static void setPickedList(ArrayList<StoriesPickedModel> itemList) {
 //
 //        Gson gson = new Gson();
 //        String json = gson.toJson(itemList);
@@ -66,20 +68,36 @@ public class SharedPrefs {
 //        return playersList;
 //    }
 //
-//    public static void setHomeList(List<PostModel> itemList) {
-//
-//        Gson gson = new Gson();
-//        String json = gson.toJson(itemList);
-//        preferenceSetter("setHomeList", json);
-//    }
-//
-//    public static List getHomeList() {
-//        Gson gson = new Gson();
-//        List<PostModel> playersList = (List<PostModel>) gson.fromJson(preferenceGetter("setHomeList"),
-//                new TypeToken<List<PostModel>>() {
-//                }.getType());
-//        return playersList;
-//    }
+    public static void setHomeList(List<GroupModel> itemList) {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(itemList);
+        preferenceSetter("setHomeList", json);
+    }
+
+    public static ArrayList<GroupModel> getHomeList() {
+        Gson gson = new Gson();
+        ArrayList<GroupModel> playersList = (ArrayList<GroupModel>) gson.fromJson(preferenceGetter("setHomeList"),
+                new TypeToken<ArrayList<GroupModel>>() {
+                }.getType());
+        return playersList;
+    }
+
+
+    public static void setInsideMessages(ArrayList<MessageModel> itemList, String groupId) {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(itemList);
+        preferenceSetter("setInsideMessages" + groupId, json);
+    }
+
+    public static ArrayList<MessageModel> getInsideMessages(String groupId) {
+        Gson gson = new Gson();
+        ArrayList<MessageModel> playersList = (ArrayList<MessageModel>) gson.fromJson(preferenceGetter("setInsideMessages" + groupId),
+                new TypeToken<ArrayList<MessageModel>>() {
+                }.getType());
+        return playersList;
+    }
 
     public static void setDeletedMessagesId(HashMap<Integer, Integer> itemList) {
 
@@ -107,36 +125,19 @@ public class SharedPrefs {
 
     }
 
-    public static void setInsideMessages(HashMap<Integer, List<MessageModel>> map, int roomid) {
 
-        Gson gson = new Gson();
-        String json = gson.toJson(map);
-        preferenceSetter("setInsideMessages" + roomid, json);
-    }
-
-    public static HashMap<Integer, List<MessageModel>> getInsideMessages(int roomId) {
-        Gson gson = new Gson();
-
-        HashMap<Integer, List<MessageModel>> retMap = new Gson().fromJson(
-                preferenceGetter("setInsideMessages" + roomId), new TypeToken<HashMap<Integer, List<MessageModel>>>() {
-                }.getType()
-        );
-
-        return retMap;
-    }
-
-    public static void setLastSeenMessage(HashMap<Integer, Boolean> itemList, int roomId) {
+    public static void setPhoneContactsName(HashMap<String, String> itemList) {
 
         Gson gson = new Gson();
         String json = gson.toJson(itemList);
-        preferenceSetter("setLastSeenMessage" + roomId, json);
+        preferenceSetter("setPhoneContacts", json);
     }
 
-    public static HashMap<Integer, Boolean> getLastSeenMessage(int roomId) {
+    public static HashMap<String, String> getPhoneContactsName() {
         Gson gson = new Gson();
 
-        HashMap<Integer, Boolean> retMap = new Gson().fromJson(
-                preferenceGetter("setLastSeenMessage" + roomId), new TypeToken<HashMap<Integer, Boolean>>() {
+        HashMap<String, String> retMap = new Gson().fromJson(
+                preferenceGetter("setPhoneContacts"), new TypeToken<HashMap<String, String>>() {
                 }.getType()
         );
 

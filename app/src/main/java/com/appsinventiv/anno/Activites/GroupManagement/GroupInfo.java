@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.appsinventiv.anno.Activites.MainActivity;
 import com.appsinventiv.anno.Activites.Phone.RequestCode;
 import com.appsinventiv.anno.Activites.SingleChatScreen;
-import com.appsinventiv.anno.Activites.UserManagement.CreateProfile;
+import com.appsinventiv.anno.Activites.UserManagement.AddUsersToGroup;
 import com.appsinventiv.anno.Adapter.GroupInfoUserList;
 import com.appsinventiv.anno.Models.GroupModel;
 import com.appsinventiv.anno.Models.UserModel;
@@ -69,10 +69,11 @@ public class GroupInfo extends AppCompatActivity {
     String groupId;
     DatabaseReference mDatabase;
     private GroupModel groupModel;
-    private ArrayList<UserModel> membersList = new ArrayList<>();
+    public static ArrayList<UserModel> membersList = new ArrayList<>();
+    public static ArrayList<String> phoneListt = new ArrayList<>();
     GroupInfoUserList adapter;
 
-    EditText name;
+    EditText name, groupDescription;
     TextView groupName;
     ImageView update;
 
@@ -84,6 +85,7 @@ public class GroupInfo extends AppCompatActivity {
     private List<Uri> mSelected = new ArrayList<>();
     private String imageUrl;
     private String downloadUrl;
+    ImageView addUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,8 @@ public class GroupInfo extends AppCompatActivity {
         this.setTitle("Group info");
         groupId = getIntent().getStringExtra("groupId");
 
+        groupDescription = findViewById(R.id.groupDescription);
+        addUsers = findViewById(R.id.addUsers);
         pickImage = findViewById(R.id.pickImage);
         participantsCount = findViewById(R.id.participantsCount);
         edName = findViewById(R.id.edName);
@@ -125,7 +129,6 @@ public class GroupInfo extends AppCompatActivity {
         });
 
 
-
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,12 +138,16 @@ public class GroupInfo extends AppCompatActivity {
                     if (mSelected.size() > 0) {
                         putPictures(imageUrl);
                     } else {
-                        mDatabase.child("Groups").child(groupId).child("name").setValue(name.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("name", name.getText().toString());
+                        map.put("groupDescription", groupDescription.getText().toString());
+                        mDatabase.child("Groups").child(groupId).updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                CommonUtils.showToast("Name updated");
+                                CommonUtils.showToast("Updated");
                             }
                         });
+
                     }
                 }
             }
@@ -155,6 +162,16 @@ public class GroupInfo extends AppCompatActivity {
                     initMatisse();
                 }
 
+            }
+        });
+
+
+        addUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(GroupInfo.this, AddUsersToGroup.class);
+                i.putExtra("groupId", groupId);
+                startActivity(i);
             }
         });
     }
@@ -217,10 +234,11 @@ public class GroupInfo extends AppCompatActivity {
                                 HashMap<String, Object> map = new HashMap<>();
                                 map.put("picUrl", downloadUrl);
                                 map.put("name", name.getText().toString());
+                                map.put("groupDescription", groupDescription.getText().toString());
                                 mDatabase.child("Groups").child(groupId).updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        CommonUtils.showToast("Name updated");
+                                        CommonUtils.showToast("Updated");
                                     }
                                 });
 
@@ -308,16 +326,21 @@ public class GroupInfo extends AppCompatActivity {
                     if (groupModel != null) {
                         groupName.setText(groupModel.getName());
                         name.setText(groupModel.getName());
+                        groupDescription.setText(groupModel.getGroupDescription());
 
 
                         if (groupModel.getAdminId().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
                             //isadmin
+                            addUsers.setVisibility(View.VISIBLE);
                             update.setVisibility(View.VISIBLE);
                             edName.setVisibility(View.VISIBLE);
                             groupName.setVisibility(View.GONE);
                             leaveGroup.setVisibility(View.GONE);
                             adapter.setAdmin(true);
+                            groupDescription.setFocusable(true);
                         } else {
+                            groupDescription.setFocusable(false);
+                            addUsers.setVisibility(View.GONE);
                             update.setVisibility(View.GONE);
                             edName.setVisibility(View.GONE);
                             groupName.setVisibility(View.VISIBLE);
@@ -328,7 +351,8 @@ public class GroupInfo extends AppCompatActivity {
                         } catch (Exception e) {
 
                         }
-
+                        membersList.clear();
+                        phoneListt.clear();
                         for (String phone : groupModel.getMembers().values()) {
                             getMembersFromServer(phone);
                         }
@@ -351,6 +375,7 @@ public class GroupInfo extends AppCompatActivity {
                 if (dataSnapshot.getValue() != null) {
                     UserModel model = dataSnapshot.getValue(UserModel.class);
                     if (model != null) {
+                        phoneListt.add(model.getPhone());
                         membersList.add(model);
                     }
                 }

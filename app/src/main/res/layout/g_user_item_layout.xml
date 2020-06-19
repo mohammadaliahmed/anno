@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:src="@drawable/man1" />
+        android:src="@drawable/avatar1" />
 
     <TextView
         android:id="@+id/name"

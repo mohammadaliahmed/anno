@@ -8,8 +8,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/create">
+        android:layout_height="match_parent">
 
 
         <LinearLayout
@@ -25,8 +24,8 @@
                 android:orientation="horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="60dp"
                     android:id="@+id/pickImage"
+                    android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_margin="10dp"
                     android:src="@drawable/ic_pick" />
@@ -76,6 +75,32 @@
 
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+
+                android:text="Group Description"
+                android:textColor="#fff" />
+
+            <EditText
+                android:layout_marginTop="5dp"
+                android:id="@+id/groupDescription"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/edit_text_bg"
+                android:gravity="top"
+                android:hint="Enter Group Description..."
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLength="250"
+                android:maxLines="4"
+                android:padding="5dp"
+                android:textColor="#fff"
+                android:textColorHint="#aaa" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -110,11 +135,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+
         android:layout_margin="20dp"
         android:background="@drawable/btn_bg"
         android:inputType="text"
         android:text="Leave Group"
         android:textColor="#fff" />
+
+    <ImageView
+        android:id="@+id/addUsers"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

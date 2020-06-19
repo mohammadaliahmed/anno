@@ -3,23 +3,34 @@ package com.appsinventiv.anno.Activites;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.appsinventiv.anno.Activites.NativeAds.NativeTemplateStyle;
+import com.appsinventiv.anno.Activites.NativeAds.TemplateView;
+import com.appsinventiv.anno.Activites.UserManagement.EditProfile;
 import com.appsinventiv.anno.Activites.UserManagement.ListOfUsers;
 import com.appsinventiv.anno.Adapter.ChatListAdapter;
 import com.appsinventiv.anno.Models.GroupModel;
 import com.appsinventiv.anno.Models.MessageModel;
+import com.appsinventiv.anno.Models.UserModel;
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.SharedPrefs;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerview;
     private ArrayList<GroupModel> itemList = new ArrayList<>();
     HashMap<String, GroupModel> groupModelHashMap = new HashMap<>();
+    TemplateView template;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +67,16 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
 
         }
+
+        template = findViewById(R.id.my_template);
+        String abc = "content://com.appsinventiv.anno.provider/external_files/Pictures/test/JPEG_20200618_175816.jpg";
+
         recyclerview = findViewById(R.id.recyclerview);
         recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        itemList = SharedPrefs.getHomeList();
+        if (itemList == null) {
+            itemList = new ArrayList<>();
+        }
         adapter = new ChatListAdapter(this, itemList, new ChatListAdapter.ChatListAdapterCallback() {
             @Override
             public void onSelected(String name) {
@@ -87,8 +108,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
         getLastMessagesFromDb();
+        getUserDataFromDB();
 
 
+    }
+
+    private void getUserDataFromDB() {
+        mDatabase.child("Users").child(SharedPrefs.getUserModel().getPhone()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    UserModel model = dataSnapshot.getValue(UserModel.class);
+                    if (model != null) {
+                        SharedPrefs.setUserModel(model);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void showNativeAd() {
+        String adId = "ca-app-pub-5349923547931941/3486006875";
+        String testAdId = "ca-app-pub-3940256099942544/2247696110";
+        String adToShow = testAdId;
+        MobileAds.initialize(MainActivity.this, adToShow);
+        AdLoader adLoader = new AdLoader.Builder(MainActivity.this, adToShow)
+                .forUnifiedNativeAd(new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
+                    @Override
+                    public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                        ColorDrawable colorDrawable = new ColorDrawable(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+
+
+                        NativeTemplateStyle styles = new
+                                NativeTemplateStyle.Builder().withMainBackgroundColor(colorDrawable).build();
+
+                        template.setStyles(styles);
+                        template.setNativeAd(unifiedNativeAd);
+
+                    }
+                })
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
     }
 
     private void getLastMessagesFromDb() {
@@ -97,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
+                    groupModelHashMap.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         GroupModel model = snapshot.getValue(GroupModel.class);
                         if (model != null) {
@@ -115,8 +182,12 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                     });
+                    SharedPrefs.setHomeList(itemList);
 
                     adapter.setItemList(itemList);
+                    if (itemList.size() > 0 && itemList.size() < 5) {
+                        showNativeAd();
+                    }
                 } else {
                     itemList = new ArrayList<>();
                     adapter.setItemList(itemList);
@@ -144,6 +215,9 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (id == R.id.profile) {
+            startActivity(new Intent(MainActivity.this, EditProfile.class));
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.logout) {

@@ -43,10 +43,10 @@
 
                     <ImageView
                         android:layout_width="30dp"
-                        android:src="@drawable/ic_delete_icon"
                         android:layout_height="30dp"
                         android:layout_gravity="center"
-                        android:padding="5dp" />
+                        android:padding="5dp"
+                        android:src="@drawable/ic_delete_icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -59,16 +59,58 @@
                         android:textStyle="italic" />
                 </LinearLayout>
 
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="200dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/old_msg_left_layout"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:id="@+id/oldMessageLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/old_msg_left_layout"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/replyImage"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="5dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/oldMessageText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text=""
+                        android:textColor="#fff"
+                        android:textSize="12sp" />
+
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/messageText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/oldMessageLayout"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
+                    android:autoLink="web"
+
 
                     android:text=""
                     android:textColor="#fff"
+                    android:textIsSelectable="true"
                     android:textSize="13sp"
                     android:visibility="visible" />
 

@@ -8,6 +8,7 @@ public class Constants {
 
 
     public static String MESSAGE_TYPE_IMAGE="IMAGE";
+    public static String MESSAGE_TYPE_REPLY="REPLY";
     public static String MESSAGE_TYPE_TEXT="TEXT";
     public static String MESSAGE_TYPE_AUDIO="AUDIO";
     public static String MESSAGE_TYPE_VIDEO="VIDEO";
@@ -23,7 +24,7 @@ public class Constants {
     public static int MENU_STEP = 1;
     public static String EXTRA_MSG = "extra_msg";
     public static String USER_ID = "extra_user_id";
-    public static String POST_ID = "extra_post_id";
+    public static String GROUP_ID = "group_id";
     public static String NOTIFICATION_COUNT = "extra_notification_count";
     public static String IMAGE_URL = "image_url";
     public static int PICTURE_POSITION = 0;

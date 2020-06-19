@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="@drawable/bg_grey"
     android:orientation="vertical">
 
@@ -54,34 +56,26 @@
                         android:textColor="#000"
                         android:textSize="16sp" />
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
+                    <com.rilixtech.CountryCodePicker
+                        android:id="@+id/ccp"
+                        android:layout_width="wrap_content"
                         android:padding="5dp"
-                        android:src="@drawable/flag" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:ccp_textColor="#000" />
 
                     <TextView
+                        android:id="@+id/countryName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:text="+92 (Pakistan)"
-                        android:textColor="#000"
-                        android:textSize="16sp" />
+                        android:layout_marginLeft="10dp"
+                        android:text="(Pakistan)"
+                        android:textColor="#000" />
 
 
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:padding="5dp"
-                    android:src="@drawable/arrow" />
             </RelativeLayout>
 
             <View
@@ -104,16 +98,18 @@
                     android:textColor="#000"
                     android:textSize="16sp" />
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:id="@+id/phone"
                     android:layout_gravity="center"
-                    android:background="@null"
-                    android:hint="Type your phone number here"
-                    android:padding="10dp" />
+                    android:backgroundTint="#fff"
+                    android:hint="Phone"
+                    android:inputType="phone"
+                    android:textColor="#000" />
             </LinearLayout>
+
+
         </LinearLayout>
 
         <TextView
@@ -128,9 +124,9 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/verify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/verify"
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
         android:background="@drawable/btn_bg"

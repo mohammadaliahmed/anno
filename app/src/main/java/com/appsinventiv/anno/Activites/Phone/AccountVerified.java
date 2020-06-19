@@ -32,6 +32,7 @@ public class AccountVerified extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(AccountVerified.this, CreateProfile.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 finish();
             }

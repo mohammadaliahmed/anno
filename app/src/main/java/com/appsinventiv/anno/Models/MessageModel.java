@@ -1,14 +1,15 @@
 package com.appsinventiv.anno.Models;
 
 public class MessageModel {
-    String id, text,messageType, messageById, groupId,groupName,picUrl;
+    String id, text, messageType, messageById, groupId, groupName, picUrl;
     long time;
+    String oldMessageId;
 
     public MessageModel() {
     }
 
     public MessageModel(String id, String text, String messageType, String messageById,
-                        String groupId, String groupName, String picUrl, long time) {
+                        String groupId, String groupName, String picUrl, long time, String oldMessageId) {
         this.id = id;
         this.text = text;
         this.messageType = messageType;
@@ -17,6 +18,15 @@ public class MessageModel {
         this.groupName = groupName;
         this.picUrl = picUrl;
         this.time = time;
+        this.oldMessageId = oldMessageId;
+    }
+
+    public String getOldMessageId() {
+        return oldMessageId;
+    }
+
+    public void setOldMessageId(String oldMessageId) {
+        this.oldMessageId = oldMessageId;
     }
 
     public String getId() {

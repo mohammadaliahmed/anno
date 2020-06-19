@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GroupModel {
-    String id,name,picUrl,adminName,adminId,text;
+    String id,name,groupDescription,picUrl,adminName,adminId,text;
     long time;
     HashMap<String,String> members;
 
     public GroupModel() {
     }
 
-    public GroupModel(String id, String name, String picUrl, String adminName,
+    public GroupModel(String id, String name,String groupDescription, String picUrl, String adminName,
                       String adminId, long time, HashMap<String, String> members,String text) {
         this.id = id;
         this.name = name;
@@ -21,6 +21,15 @@ public class GroupModel {
         this.time = time;
         this.members = members;
         this.text = text;
+        this.groupDescription = groupDescription;
+    }
+
+    public String getGroupDescription() {
+        return groupDescription;
+    }
+
+    public void setGroupDescription(String groupDescription) {
+        this.groupDescription = groupDescription;
     }
 
     public String getText() {

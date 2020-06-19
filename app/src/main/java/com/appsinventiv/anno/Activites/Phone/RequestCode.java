@@ -6,22 +6,30 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
+import com.appsinventiv.anno.Utils.SharedPrefs;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.rilixtech.Country;
+import com.rilixtech.CountryCodePicker;
 
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 
 public class RequestCode extends AppCompatActivity {
 
-    EditText phone;
+    AppCompatEditText phone;
     Button verify;
 
+    CountryCodePicker ccp;
+    private String foneCode;
+    TextView countryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +37,10 @@ public class RequestCode extends AppCompatActivity {
         setContentView(R.layout.activity_request_code);
         verify = findViewById(R.id.verify);
         phone = findViewById(R.id.phone);
+        countryName = findViewById(R.id.countryName);
 
+        ccp = (CountryCodePicker) findViewById(R.id.ccp);
+        foneCode = "+92";
 
         verify.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,17 +54,25 @@ public class RequestCode extends AppCompatActivity {
                 }
             }
         });
+        ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+            @Override
+            public void onCountrySelected(Country selectedCountry) {
+                foneCode = selectedCountry.getPhoneCode();
+                countryName.setText("(" + selectedCountry.getName() + ")");
+            }
+        });
+        ccp.registerPhoneNumberTextView(phone);
+
     }
 
     private void requestCode() {
         String ph = phone.getText().toString();
-        if (ph.startsWith("03")) {
-            ph.substring(1);
-        }
+//        if (ph.startsWith("03")) {
+//            ph=ph.substring(1);
+//        }
         Intent i = new Intent(RequestCode.this, VerifyCode.class);
-        i.putExtra("number", "+92" + ph);
+        i.putExtra("number", foneCode + ph);
         startActivity(i);
-
 
 
     }

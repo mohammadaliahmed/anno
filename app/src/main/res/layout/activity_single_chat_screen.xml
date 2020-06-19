@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_activity_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="70dp">
 
@@ -14,8 +18,8 @@
             android:id="@+id/back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
             android:padding="10dp"
             android:src="@drawable/back" />
 
@@ -40,32 +44,183 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/message"
-        android:layout_marginTop="70dp"
+        android:layout_above="@+id/adas"
+        android:layout_below="@id/adView"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="10dp" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/memesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_above="@id/adas"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="-10dp"
+        android:padding="10dp"
+        android:visibility="gone">
 
-    <EditText
-        android:id="@+id/message"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/sliding_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                app:tabMode="fixed"
+                app:tabTextColor="@color/colorPrimary" />
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/replyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/adas"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="-10dp"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:padding="5dp"
+                android:src="@drawable/ic_cancel" />
+
+
+            <TextView
+                android:id="@+id/you"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:text="Reply To:"
+                android:textColor="#000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/replyOldText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/you"
+                android:maxLines="5"
+                android:text=""
+                android:textColor="#000" />
+
+            <ImageView
+
+                android:id="@+id/replyImage"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/you"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <RelativeLayout
+        android:id="@+id/adas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="70dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="60dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/edit_text_bg"
-        android:hint="Enter message"
-        android:inputType="textCapSentences|textMultiLine"
-        android:maxHeight="110dp"
-        android:padding="10dp"
-        android:scrollbars="vertical"
-        android:text=""
-        android:textColor="#fff"
-        android:textColorHint="#C5C5C5" />
+        android:background="@drawable/edit_text_bg">
+
+        <ImageView
+            android:id="@+id/emoji"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:padding="8dp"
+            android:src="@drawable/emoji" />
+
+        <ImageView
+            android:id="@+id/memes"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp"
+            android:src="@drawable/meme" />
+
+        <ImageView
+            android:id="@+id/camera"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="3dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp"
+            android:src="@drawable/ic_camera" />
+
+
+        <com.vanniktech.emoji.EmojiEditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="80dp"
+            android:background="@null"
+            android:hint="Enter message"
+            android:imeOptions="actionSend"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxHeight="110dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:scrollbars="vertical"
+            android:text=""
+            android:textColor="#fff"
+            android:textColorHint="#C5C5C5" />
+
+
+    </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/send"
@@ -73,7 +228,8 @@
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/ic_send" />
 
 

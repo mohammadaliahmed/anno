@@ -50,16 +50,15 @@ import id.zelory.compressor.Compressor;
 public class CreateGroup extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
-    EditText groupName;
+    EditText groupName, groupDescription;
     Button create;
     DatabaseReference mDatabase;
     TextView participantsCount;
     CircleImageView pickImage;
     List<Uri> mSelected = new ArrayList<>();
-    String imageUrl ;
+    String imageUrl;
     StorageReference mStorageRef;
     private String downloadUrl;
-
 
 
     @Override
@@ -76,6 +75,7 @@ public class CreateGroup extends AppCompatActivity {
         pickImage = findViewById(R.id.pickImage);
         create = findViewById(R.id.create);
         groupName = findViewById(R.id.groupName);
+        groupDescription = findViewById(R.id.groupDescription);
         participantsCount = findViewById(R.id.participantsCount);
         participantsCount.setText(ListOfUsers.selectedMap.size() + " participants");
         create.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +184,7 @@ public class CreateGroup extends AppCompatActivity {
         final String key = mDatabase.push().getKey();
         GroupModel model = new GroupModel(key,
                 groupName.getText().toString(),
+                groupDescription.getText().toString(),
                 "" + downloadUrl,
                 SharedPrefs.getUserModel().getName(),
                 SharedPrefs.getUserModel().getPhone(),

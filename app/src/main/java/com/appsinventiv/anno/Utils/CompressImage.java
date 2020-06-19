@@ -45,8 +45,8 @@ public class CompressImage {
 
             int actualHeight = options.outHeight;
             int actualWidth = options.outWidth;
-            float maxHeight = 816.0f;
-            float maxWidth = 612.0f;
+            float maxHeight = 516.0f;
+            float maxWidth = 412.0f;
             float imgRatio = actualWidth / actualHeight;
             float maxRatio = maxWidth / maxHeight;
 
@@ -129,7 +129,7 @@ public class CompressImage {
             try {
                 out = new FileOutputStream(filename);
                 if (scaledBitmap != null) {
-                    scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+                    scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
                 }
 
             } catch (FileNotFoundException e) {

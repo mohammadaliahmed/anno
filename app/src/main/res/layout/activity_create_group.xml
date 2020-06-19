@@ -13,10 +13,10 @@
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/pickImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="10dp"
-            android:id="@+id/pickImage"
             android:src="@drawable/ic_pick" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -28,13 +28,13 @@
             app:hintTextColor="#fff">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/groupName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#fff"
-                android:inputType="textCapWords"
                 android:foregroundTint="#fff"
-                android:id="@+id/groupName"
                 android:hint="Enter Group name"
+                android:inputType="textCapWords"
                 android:textColor="#fff"
                 android:textColorHint="#fff" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,11 +42,27 @@
 
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/groupDescription"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/edit_text_bg"
+        android:inputType="textCapSentences|textMultiLine"
+
+        android:gravity="top"
+        android:hint="Group Description..."
+        android:maxLines="4"
+        android:maxLength="250"
+        android:padding="5dp"
+        android:textColor="#fff"
+        android:textColorHint="#aaa" />
+
     <TextView
+        android:id="@+id/participantsCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:id="@+id/participantsCount"
         android:layout_margin="10dp"
         android:text="0 Participants"
         android:textColor="#fff" />

@@ -15,7 +15,12 @@ import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
 import com.appsinventiv.anno.Utils.SharedPrefs;
 import com.goodiebag.pinview.Pinview;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthSettings;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +28,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -40,9 +47,11 @@ public class VerifyCode extends AppCompatActivity {
     TextView number;
     TextView change, changen;
     Button validate;
+    TextView sendAgain;
     private String smsCode;
     DatabaseReference mDatabase;
     HashMap<String, UserModel> userMap = new HashMap<>();
+    private String mVerificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,19 +61,54 @@ public class VerifyCode extends AppCompatActivity {
         pin = findViewById(R.id.pinview);
         number = findViewById(R.id.number);
         change = findViewById(R.id.change);
+        sendAgain = findViewById(R.id.sendAgain);
         changen = findViewById(R.id.changen);
         validate = findViewById(R.id.validate);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        phoneNumber = getIntent().getStringExtra("number");
+        number.setText(phoneNumber);
+
+
         getUsersFromDB();
 
+        sendAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        requestCode();
         validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//
+//                checkUser();
+
+                if (!pin.getValue().equalsIgnoreCase("")) {
+                    PhoneAuthCredential provider = PhoneAuthProvider.getCredential(mVerificationId, pin.getValue());
+                    final FirebaseAuth auth = FirebaseAuth.getInstance();
+                    auth.signInWithCredential(provider).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+//                        CommonUtils.showToast("" + authResult);
+                            CommonUtils.showToast("Successfully verified");
+                            checkUser();
+                            SharedPrefs.setPhone(phoneNumber);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+//                            CommonUtils.showToast(e.getMessage());
+                            CommonUtils.showToast("Invalid Pin");
+                        }
+                    });
+                } else {
+                    CommonUtils.showToast("Enter pin");
+                }
 //                if (!pin.getValue().equalsIgnoreCase("")) {
 //                    if (smsCode != null) {
 //                        if (smsCode.equalsIgnoreCase(pin.getValue())) {
-                checkUser();
+//                            checkUser();
 //                            CommonUtils.showToast("Verified");
 //                            SharedPrefs.setPhone(phoneNumber);
 //
@@ -100,10 +144,6 @@ public class VerifyCode extends AppCompatActivity {
             }
         });
 
-        phoneNumber = getIntent().getStringExtra("number");
-        number.setText(phoneNumber);
-//        requestCode();
-
 
     }
 
@@ -127,9 +167,13 @@ public class VerifyCode extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        UserModel userModel = snapshot.getValue(UserModel.class);
-                        if (userModel != null) {
-                            userMap.put(snapshot.getKey(), userModel);
+                        try {
+                            UserModel userModel = snapshot.getValue(UserModel.class);
+                            if (userModel != null) {
+                                userMap.put(snapshot.getKey(), userModel);
+                            }
+                        } catch (Exception e) {
+
                         }
                     }
                 }
@@ -145,7 +189,6 @@ public class VerifyCode extends AppCompatActivity {
     private void requestCode() {
 
         phoneAuth = PhoneAuthProvider.getInstance();
-
 
         phoneAuth.verifyPhoneNumber(
                 phoneNumber,
@@ -171,7 +214,7 @@ public class VerifyCode extends AppCompatActivity {
                     public void onCodeSent(String verificationId,
                                            PhoneAuthProvider.ForceResendingToken token) {
                         CommonUtils.showToast("Code sent");
-
+                        mVerificationId = verificationId;
                         // Save verification ID and resending token so we can use them later
 
 

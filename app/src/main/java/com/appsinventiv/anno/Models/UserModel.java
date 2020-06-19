@@ -3,14 +3,18 @@ package com.appsinventiv.anno.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+
 public class UserModel implements Parcelable {
-    String name,phone,avatar,fcmKey;
+    String name, phone, avatar, fcmKey;
     long time;
+    HashMap<String, String> blockedMe;
+    HashMap<String, String> blockedList;
 
     public UserModel() {
     }
 
-    public UserModel(String name, String phone, String avatar,  long time) {
+    public UserModel(String name, String phone, String avatar, long time) {
         this.name = name;
         this.phone = phone;
         this.avatar = avatar;
@@ -32,6 +36,22 @@ public class UserModel implements Parcelable {
         dest.writeString(avatar);
         dest.writeString(fcmKey);
         dest.writeLong(time);
+    }
+
+    public HashMap<String, String> getBlockedMe() {
+        return blockedMe;
+    }
+
+    public void setBlockedMe(HashMap<String, String> blockedMe) {
+        this.blockedMe = blockedMe;
+    }
+
+    public HashMap<String, String> getBlockedList() {
+        return blockedList;
+    }
+
+    public void setBlockedList(HashMap<String, String> blockedList) {
+        this.blockedList = blockedList;
     }
 
     @Override

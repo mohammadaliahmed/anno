@@ -49,6 +49,11 @@
         <activity android:name=".Activites.GroupManagement.CreateGroup" />
         <activity android:name=".Activites.GroupManagement.GroupInfo"
             android:windowSoftInputMode="adjustNothing"/>
+        <activity android:name=".Activites.UserManagement.AddUsersToGroup" />
+        <activity android:name=".Activites.ViewPictures"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Activites.UserManagement.EditProfile"
+            android:windowSoftInputMode="adjustNothing"/>
 
         <service android:name=".Utils.MyFirebaseMessagingService">
             <intent-filter>
@@ -64,6 +69,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5349923547931941~1242986914"/>
     </application>
 
 </manifest>

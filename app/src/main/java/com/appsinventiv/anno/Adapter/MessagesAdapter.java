@@ -7,16 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appsinventiv.anno.Activites.SingleChatScreen;
+import com.appsinventiv.anno.Activites.ViewPictures;
 import com.appsinventiv.anno.Models.MessageModel;
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
 import com.appsinventiv.anno.Utils.Constants;
 import com.appsinventiv.anno.Utils.SharedPrefs;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +32,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     MessagesAdapterCallback callback;
     public int RIGHT_CHAT = 1;
     public int LEFT_CHAT = 0;
+    private HashMap<String, MessageModel> messagesMap = new HashMap<>();
 
     public MessagesAdapter(Context context, ArrayList<MessageModel> itemList, MessagesAdapterCallback callback) {
         this.context = context;
@@ -36,6 +42,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     public void setItemList(ArrayList<MessageModel> itemList) {
         this.itemList = itemList;
+        this.messagesMap = ((SingleChatScreen) context).getMessagesMap();
+
         notifyDataSetChanged();
     }
 
@@ -76,14 +84,65 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             holder.deletedLayout.setVisibility(View.VISIBLE);
             holder.time.setVisibility(View.GONE);
             holder.messageText.setVisibility(View.GONE);
+            holder.oldMessageLayout.setVisibility(View.GONE);
+            holder.oldMessageLayout.setVisibility(View.GONE);
+            holder.image.setVisibility(View.GONE);
+
+
         } else if (model.getMessageType().equalsIgnoreCase(Constants.MESSAGE_TYPE_TEXT)) {
             holder.messageText.setText(model.getText());
             holder.time.setText(CommonUtils.getFormattedTime(model.getTime()));
             holder.deletedLayout.setVisibility(View.GONE);
             holder.time.setVisibility(View.VISIBLE);
             holder.messageText.setVisibility(View.VISIBLE);
-        }
+            holder.oldMessageLayout.setVisibility(View.GONE);
 
+            holder.image.setVisibility(View.GONE);
+
+
+        } else if (model.getMessageType().equalsIgnoreCase(Constants.MESSAGE_TYPE_IMAGE)) {
+            holder.deletedLayout.setVisibility(View.GONE);
+            holder.messageText.setVisibility(View.GONE);
+            holder.oldMessageLayout.setVisibility(View.GONE);
+
+            holder.image.setVisibility(View.VISIBLE);
+            holder.time.setVisibility(View.VISIBLE);
+
+            holder.time.setText(CommonUtils.getFormattedTime(model.getTime()));
+            try {
+                Glide.with(context).load(model.getPicUrl()).into(holder.image);
+            } catch (Exception e) {
+
+            }
+
+
+        } else if (model.getMessageType().equalsIgnoreCase(Constants.MESSAGE_TYPE_REPLY)) {
+            holder.deletedLayout.setVisibility(View.GONE);
+            holder.oldMessageLayout.setVisibility(View.VISIBLE);
+            if (messagesMap.size() > 0 && messagesMap.get(model.getOldMessageId()) != null) {
+                if (messagesMap.get(model.getOldMessageId()).getMessageType().equalsIgnoreCase(Constants.MESSAGE_TYPE_IMAGE)) {
+                    holder.replyImage.setVisibility(View.VISIBLE);
+                    holder.oldMessageText.setVisibility(View.GONE);
+                    try {
+                        Glide.with(context).load(messagesMap.get(model.getOldMessageId()).getPicUrl()).into(holder.replyImage);
+                    } catch (Exception e) {
+
+                    }
+                } else {
+                    holder.replyImage.setVisibility(View.GONE);
+                    holder.oldMessageText.setVisibility(View.VISIBLE);
+
+                    holder.oldMessageText.setText(messagesMap.get(model.getOldMessageId()).getText());
+                }
+            }
+            holder.time.setVisibility(View.VISIBLE);
+            holder.messageText.setVisibility(View.VISIBLE);
+            holder.time.setText(CommonUtils.getFormattedTime(model.getTime()));
+            holder.messageText.setText(model.getText());
+            holder.image.setVisibility(View.GONE);
+
+
+        }
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -92,6 +151,25 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             }
         });
 
+        holder.image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(context, ViewPictures.class);
+                i.putExtra("url", model.getPicUrl());
+                context.startActivity(i);
+            }
+        });
+
+        holder.oldMessageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callback.onGoToMessage(model.getOldMessageId());
+            }
+        });
+
+
+//        List<String> indexes = new ArrayList<String>(messagesMap.keySet()); // <== Set to List
+//        indexes.indexOf("Audi");
     }
 
     @Override
@@ -100,9 +178,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView name, messageText, time;
+        TextView name, messageText, time, oldMessageText;
         LinearLayout deletedLayout;
+        RelativeLayout oldMessageLayout;
+        ImageView image, replyImage;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -112,10 +191,16 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             messageText = itemView.findViewById(R.id.messageText);
             time = itemView.findViewById(R.id.time);
             deletedLayout = itemView.findViewById(R.id.deletedLayout);
+            oldMessageLayout = itemView.findViewById(R.id.oldMessageLayout);
+            oldMessageText = itemView.findViewById(R.id.oldMessageText);
+            image = itemView.findViewById(R.id.image);
+            replyImage = itemView.findViewById(R.id.replyImage);
         }
     }
 
     public interface MessagesAdapterCallback {
         public void onSelected(MessageModel model);
+
+        public void onGoToMessage(String text);
     }
 }
