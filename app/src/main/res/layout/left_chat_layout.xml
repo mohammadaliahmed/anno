@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:layout_marginTop="15dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
+
     <RelativeLayout
+        android:id="@+id/mess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -53,6 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="5sp"
+                        android:fontFamily="@font/bathrind"
                         android:text="This message was deleted"
                         android:textColor="#EBEBEB"
                         android:textSize="12sp"
@@ -68,6 +71,14 @@
                     android:background="@drawable/old_msg_left_layout"
                     android:scaleType="centerCrop"
                     android:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/imageProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
+
 
                 <RelativeLayout
                     android:id="@+id/oldMessageLayout"
@@ -91,6 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:fontFamily="@font/bathrind"
                         android:text=""
                         android:textColor="#fff"
                         android:textSize="12sp" />
@@ -106,8 +118,6 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:autoLink="web"
-
-
                     android:text=""
                     android:textColor="#fff"
                     android:textIsSelectable="true"
@@ -124,13 +134,46 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/content"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="2dp"
+                android:fontFamily="@font/bathrind"
                 android:text=""
                 android:textColor="#fff"
                 android:textSize="10sp" />
         </RelativeLayout>
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/messageOptions"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_below="@id/mess"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/message_box_left"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+
+        <ImageView
+            android:id="@+id/deleteMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_delete" />
+
+        <ImageView
+            android:id="@+id/copyMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_copy" />
+
+    </LinearLayout>
 </RelativeLayout>

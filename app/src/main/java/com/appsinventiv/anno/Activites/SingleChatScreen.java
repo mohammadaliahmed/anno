@@ -39,6 +39,7 @@ import com.appsinventiv.anno.Models.MessageModel;
 import com.appsinventiv.anno.Models.UserModel;
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
+import com.appsinventiv.anno.Utils.ConnectivityManager;
 import com.appsinventiv.anno.Utils.Constants;
 import com.appsinventiv.anno.Utils.GifSizeFilter;
 import com.appsinventiv.anno.Utils.Glide4Engine;
@@ -136,6 +137,25 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("memeShare"));
+    }
+
+    @Override
+    protected void onPause() {
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        } catch (Exception e) {
+
+        }
+        super.onPause();
+
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_chat_screen);
@@ -143,8 +163,7 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("memeShare"));
+
         getPermissions();
         groupNameTv = findViewById(R.id.groupNameTv);
         memes = findViewById(R.id.memes);
@@ -276,10 +295,14 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     }
 
     private void initMatisse() {
+        uploadedCount = 0;
+        mSelected.clear();
+        imageUrl.clear();
         memeLayoutShowing = false;
         memesLayout.setVisibility(View.GONE);
         Matisse.from(this)
                 .choose(MimeType.ofImage(), false)
+                .showSingleMediaType(true)
                 .countable(true)
                 .capture(true)
                 .captureStrategy(
@@ -514,52 +537,55 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     }
 
     private void sendMessage(String messageType, String picUrl) {
-        memeLayoutShowing = false;
-        memesLayout.setVisibility(View.GONE);
-        String key = mDatabase.push().getKey();
-        MessageModel messageModel;
-        if (replyShowing) {
-            messageModel = new MessageModel(
-                    key,
-                    messageText,
-                    Constants.MESSAGE_TYPE_REPLY,
-                    SharedPrefs.getUserModel().getPhone(),
-                    groupId,
-                    groupName,
-                    "",
-                    System.currentTimeMillis(), oldMessageId);
-            replyShowing = false;
+        if (!ConnectivityManager.isNetworkConnected(this)) {
+            CommonUtils.showToast("Unable to send message\nPlease check your internet connection");
         } else {
-            messageModel = new MessageModel(
-                    key,
-                    messageText,
-                    messageType,
-                    SharedPrefs.getUserModel().getPhone(),
-                    groupId,
-                    groupName,
-                    picUrl,
-                    System.currentTimeMillis(), "");
-        }
+            memeLayoutShowing = false;
+            memesLayout.setVisibility(View.GONE);
+            String key = mDatabase.push().getKey();
+            MessageModel messageModel;
+            if (replyShowing) {
+                messageModel = new MessageModel(
+                        key,
+                        messageText,
+                        Constants.MESSAGE_TYPE_REPLY,
+                        SharedPrefs.getUserModel().getPhone(),
+                        groupId,
+                        groupName,
+                        "",
+                        System.currentTimeMillis(), oldMessageId, false);
+                replyShowing = false;
+            } else {
+                messageModel = new MessageModel(
+                        key,
+                        messageText,
+                        messageType,
+                        SharedPrefs.getUserModel().getPhone(),
+                        groupId,
+                        groupName,
+                        picUrl,
+                        System.currentTimeMillis(), "", false);
+            }
 
-        for (final UserModel member : membersList) {
-            mDatabase.child("Chats").child(member.getPhone()).child(groupId).child(key).setValue(messageModel);
-        }
-        replyLayout.setVisibility(View.GONE);
-        HashMap<String, Object> abc = new HashMap<>();
-        if (messageType.equalsIgnoreCase(Constants.MESSAGE_TYPE_IMAGE)) {
-            abc.put("text", "\uD83D\uDCF7 Image");
-        } else {
-            abc.put("text", messageText);
-        }
-        abc.put("time", System.currentTimeMillis());
-        mDatabase.child("Groups").child(groupId).updateChildren(abc);
-        if (messageType.equalsIgnoreCase(Constants.MESSAGE_TYPE_IMAGE)) {
-            sendNotifications("\uD83D\uDCF7 Image");
-        } else {
-            sendNotifications(messageText);
+            for (final UserModel member : membersList) {
+                mDatabase.child("Chats").child(member.getPhone()).child(groupId).child(key).setValue(messageModel);
+            }
+            replyLayout.setVisibility(View.GONE);
+            HashMap<String, Object> abc = new HashMap<>();
+            if (messageType.equalsIgnoreCase(Constants.MESSAGE_TYPE_IMAGE)) {
+                abc.put("text", "\uD83D\uDCF7 Image");
+            } else {
+                abc.put("text", messageText);
+            }
+            abc.put("time", System.currentTimeMillis());
+            mDatabase.child("Groups").child(groupId).updateChildren(abc);
+            if (messageType.equalsIgnoreCase(Constants.MESSAGE_TYPE_IMAGE)) {
+                sendNotifications("\uD83D\uDCF7 Image");
+            } else {
+                sendNotifications(messageText);
 
+            }
         }
-
 
     }
 
@@ -625,6 +651,18 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     }
 
     public void putPictures(String path) {
+        MessageModel messageModel = new MessageModel(
+                mDatabase.push().getKey(),
+                messageText,
+                Constants.MESSAGE_TYPE_IMAGE,
+                SharedPrefs.getUserModel().getPhone(),
+                groupId,
+                groupName,
+                mSelected.get(uploadedCount) + "",
+                System.currentTimeMillis(), "", true);
+        messagesList.add(messageModel);
+        adapter.setItemList(messagesList);
+        recyclerview.scrollToPosition(messagesList.size() - 1);
         String imgName = Long.toHexString(Double.doubleToLongBits(Math.random()));
 
         ;
@@ -672,9 +710,37 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String picUrl = intent.getStringExtra("picUrl");
-            sendMessage(Constants.MESSAGE_TYPE_IMAGE, picUrl);
+            showPreviewAlert(picUrl);
         }
     };
+
+    private void showPreviewAlert(final String picUrl) {
+        final Dialog dialog = new Dialog(this, R.style.AppTheme_NoActionBar);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View layout = layoutInflater.inflate(R.layout.alert_preview_curved, null);
+
+        dialog.setContentView(layout);
+
+        ImageView imagePreview = layout.findViewById(R.id.imagePreview);
+        ImageView send = layout.findViewById(R.id.send);
+        TextView sendTo = layout.findViewById(R.id.sendTo);
+        Glide.with(SingleChatScreen.this).load(picUrl).into(imagePreview);
+        sendTo.setText("Send to ] " + groupName);
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                sendMessage(Constants.MESSAGE_TYPE_IMAGE, picUrl);
+            }
+        });
+
+
+        dialog.show();
+    }
 
     private void getPermissions() {
         int PERMISSION_ALL = 1;

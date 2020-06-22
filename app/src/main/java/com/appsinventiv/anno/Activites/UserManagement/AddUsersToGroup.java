@@ -1,6 +1,7 @@
 package com.appsinventiv.anno.Activites.UserManagement;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -145,7 +147,7 @@ public class AddUsersToGroup extends AppCompatActivity {
                         }
                     }
                     userList = new ArrayList<>(userMap.values());
-                    adapter.setItemList(userList);
+                    adapter.updateList(userList);
                 }
             }
 
@@ -206,18 +208,58 @@ public class AddUsersToGroup extends AppCompatActivity {
         return true;
     }
 
-    @Override
+
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.user_menu, menu);
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+//                loadHistory(query);
+                adapter.filter(query);
+                return true;
+
+            }
+
+        });
+
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
         if (item.getItemId() == android.R.id.home) {
 
 
             finish();
         }
+
+        //noinspection SimplifiableIfStatement
+//        if (id == R.id.invite) {
+//            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//
+//            shareIntent.setType("text/plain");
+//            shareIntent.putExtra(Intent.EXTRA_TEXT, "Anno Chat\n Download Now\n" + "http://play.google.com/store/apps/details?id=" + ListOfUsers.this.getPackageName());
+//            startActivity(Intent.createChooser(shareIntent, "Share App via.."));
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

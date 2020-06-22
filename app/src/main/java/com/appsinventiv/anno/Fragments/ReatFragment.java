@@ -19,10 +19,9 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class GifsFragment extends Fragment {
+public class ReatFragment extends Fragment {
 
     RecyclerView recyclerview;
     Context context;
@@ -54,7 +53,7 @@ public class GifsFragment extends Fragment {
     }
 
     private void getDataFromDB() {
-        mDatabase.child("Media").child("GIFS").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Media").child("Reactions").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 itemList.clear();

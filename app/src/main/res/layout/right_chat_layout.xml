@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="15dp"
-
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground">
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userImage"
@@ -15,8 +16,10 @@
         android:src="@drawable/profile" />
 
     <RelativeLayout
+        android:id="@+id/mess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_marginLeft="100dp"
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@id/userImage"
@@ -48,6 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
+                    android:fontFamily="@font/bathrind"
                     android:text="You deleted this message"
                     android:textColor="#EBEBEB"
                     android:textSize="12sp"
@@ -61,6 +65,13 @@
                 android:layout_margin="3dp"
                 android:background="@drawable/old_msg_right_layout"
                 android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/imageProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:visibility="gone" />
 
             <RelativeLayout
@@ -86,6 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
+                    android:fontFamily="@font/bathrind"
                     android:text=""
                     android:textColor="#fff"
                     android:textSize="12sp" />
@@ -115,13 +127,49 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/content"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="2dp"
+            android:fontFamily="@font/bathrind"
             android:text=""
             android:textColor="#fff"
             android:textSize="10sp" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/messageOptions"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_below="@id/mess"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/message_box"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+
+        <ImageView
+            android:id="@+id/deleteMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_delete" />
+
+        <ImageView
+            android:id="@+id/copyMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_copy" />
+
+
+    </LinearLayout>
+
 
 </RelativeLayout>

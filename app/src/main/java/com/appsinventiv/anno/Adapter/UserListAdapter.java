@@ -23,6 +23,8 @@ import org.w3c.dom.Text;
 import java.io.Serializable;
 import java.security.Signature;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,18 +33,43 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     Context context;
     ArrayList<UserModel> itemList;
     UserListAdapterCallback callback;
+    ArrayList<UserModel> arrayList;
 
 
     public UserListAdapter(Context context, ArrayList<UserModel> itemList, UserListAdapterCallback callback) {
         this.context = context;
         this.itemList = itemList;
         this.callback = callback;
+        this.arrayList = new ArrayList<>(itemList);
+
     }
 
-    public void setItemList(ArrayList<UserModel> itemList) {
-        this.itemList = itemList;
+    public void updateList(ArrayList<UserModel> list) {
+        this.itemList = list;
+        arrayList.clear();
+        arrayList.addAll(list);
         notifyDataSetChanged();
     }
+
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+        itemList.clear();
+        if (charText.length() == 0) {
+            itemList.addAll(arrayList);
+        } else {
+            for (UserModel text : arrayList) {
+                if (text.getName().toLowerCase().contains(charText) || text.getPhone().toLowerCase().contains(charText)
+                ) {
+                    itemList.add(text);
+                }
+            }
+
+
+        }
+        notifyDataSetChanged();
+
+    }
+
 
     @NonNull
     @Override

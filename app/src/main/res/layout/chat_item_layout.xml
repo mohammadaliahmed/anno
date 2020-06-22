@@ -17,6 +17,7 @@
         android:src="@drawable/avatar1" />
 
     <TextView
+                    android:fontFamily="@font/bathrind"
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,6 +34,7 @@
 
 
     <TextView
+                    android:fontFamily="@font/bathrind"
         android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,6 +49,7 @@
         android:textColor="#fff" />
 
     <TextView
+                    android:fontFamily="@font/bathrind"
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

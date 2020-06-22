@@ -4,12 +4,14 @@ public class MessageModel {
     String id, text, messageType, messageById, groupId, groupName, picUrl;
     long time;
     String oldMessageId;
+    boolean imageUploading;
+    boolean selected;
 
     public MessageModel() {
     }
 
     public MessageModel(String id, String text, String messageType, String messageById,
-                        String groupId, String groupName, String picUrl, long time, String oldMessageId) {
+                        String groupId, String groupName, String picUrl, long time, String oldMessageId, boolean imageUploading) {
         this.id = id;
         this.text = text;
         this.messageType = messageType;
@@ -19,6 +21,23 @@ public class MessageModel {
         this.picUrl = picUrl;
         this.time = time;
         this.oldMessageId = oldMessageId;
+        this.imageUploading = imageUploading;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isImageUploading() {
+        return imageUploading;
+    }
+
+    public void setImageUploading(boolean imageUploading) {
+        this.imageUploading = imageUploading;
     }
 
     public String getOldMessageId() {

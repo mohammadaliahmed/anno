@@ -1,16 +1,20 @@
 package com.appsinventiv.anno.Activites.UserManagement;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +22,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.appsinventiv.anno.Activites.GroupManagement.CreateGroup;
+import com.appsinventiv.anno.Activites.GroupManagement.GroupInfo;
 import com.appsinventiv.anno.Activites.MainActivity;
 import com.appsinventiv.anno.Activites.Phone.RequestCode;
 import com.appsinventiv.anno.Activites.Splash;
@@ -44,6 +50,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,6 +67,7 @@ public class ListOfUsers extends AppCompatActivity {
     public static HashMap<String, String> selectedMap = new HashMap<>();
     ImageView next;
     private ArrayList<String> phoneList = new ArrayList<>();
+    Button invite;
 
 
     @Override
@@ -68,6 +76,7 @@ public class ListOfUsers extends AppCompatActivity {
         setContentView(R.layout.activity_list_of_users);
         recyclerview = findViewById(R.id.recyclerview);
         next = findViewById(R.id.next);
+        invite = findViewById(R.id.invite);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         getPermissions();
@@ -84,6 +93,17 @@ public class ListOfUsers extends AppCompatActivity {
             public void onClick(View view) {
                 startActivity(new Intent(ListOfUsers.this, CreateGroup.class));
                 finish();
+
+            }
+        });
+        invite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, SharedPrefs.getUserModel().getPhone() + " has invited you to an anonymous group chat.\n Join now . " + "http://play.google.com/store/apps/details?id=" + ListOfUsers.this.getPackageName());
+                startActivity(Intent.createChooser(shareIntent, "Share App via.."));
 
             }
         });
@@ -129,14 +149,26 @@ public class ListOfUsers extends AppCompatActivity {
     }
 
     private void showBlockAlert(final String phone) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Alert");
-        builder.setMessage("Do you want to block this user? ");
 
-        // add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        final Dialog dialog = new Dialog(ListOfUsers.this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View layout = layoutInflater.inflate(R.layout.alert_custom_dialog, null);
+
+        dialog.setContentView(layout);
+
+        TextView message = layout.findViewById(R.id.message);
+        TextView cancel = layout.findViewById(R.id.cancel);
+        TextView yes = layout.findViewById(R.id.yes);
+
+
+        message.setText("Do you want to block this user?");
+        yes.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(View view) {
+                dialog.dismiss();
                 mDatabase.child("Users").child(SharedPrefs.getUserModel().getPhone()).child("blockedList").child(phone).setValue(phone);
                 mDatabase.child("Users").child(phone).child("blockedMe").child(SharedPrefs.getUserModel().getPhone()).setValue(SharedPrefs.getUserModel().getPhone()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -145,26 +177,46 @@ public class ListOfUsers extends AppCompatActivity {
                         getDataFromServer();
                     }
                 });
+            }
+        });
 
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
 
             }
         });
-        builder.setNegativeButton("Cancel", null);
 
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
+
         dialog.show();
+
+
     }
 
     private void showUnBlockAlert(final String phone) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Alert");
-        builder.setMessage("Do you want to unblock this user? ");
 
-        // add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        final Dialog dialog = new Dialog(ListOfUsers.this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View layout = layoutInflater.inflate(R.layout.alert_custom_dialog, null);
+
+        dialog.setContentView(layout);
+
+        TextView message = layout.findViewById(R.id.message);
+        TextView cancel = layout.findViewById(R.id.cancel);
+        TextView yes = layout.findViewById(R.id.yes);
+
+
+        message.setText("Do you want to unblock this user?");
+        yes.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(View view) {
+                dialog.dismiss();
                 mDatabase.child("Users").child(SharedPrefs.getUserModel().getPhone()).child("blockedList").child(phone).removeValue();
                 mDatabase.child("Users").child(phone).child("blockedMe").child(SharedPrefs.getUserModel().getPhone()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -173,15 +225,23 @@ public class ListOfUsers extends AppCompatActivity {
                         getDataFromServer();
                     }
                 });
+            }
+        });
 
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
 
             }
         });
-        builder.setNegativeButton("Cancel", null);
 
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
+
         dialog.show();
+
+
     }
 
     private void getDataFromServer() {
@@ -209,7 +269,7 @@ public class ListOfUsers extends AppCompatActivity {
                         }
                     }
                     userList = new ArrayList<>(userMap.values());
-                    adapter.setItemList(userList);
+                    adapter.updateList(userList);
                 }
             }
 
@@ -299,6 +359,30 @@ public class ListOfUsers extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.user_menu, menu);
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+//                loadHistory(query);
+                adapter.filter(query);
+                return true;
+
+            }
+
+        });
+
         return true;
     }
 
@@ -308,18 +392,24 @@ public class ListOfUsers extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (item.getItemId() == android.R.id.home) {
+
+
+            finish();
+        }
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.invite) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Anno Chat\n Download Now\n" + "http://play.google.com/store/apps/details?id=" + ListOfUsers.this.getPackageName());
-            startActivity(Intent.createChooser(shareIntent, "Share App via.."));
-            return true;
-        }
+//        if (id == R.id.invite) {
+//            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//
+//            shareIntent.setType("text/plain");
+//            shareIntent.putExtra(Intent.EXTRA_TEXT, "Anno Chat\n Download Now\n" + "http://play.google.com/store/apps/details?id=" + ListOfUsers.this.getPackageName());
+//            startActivity(Intent.createChooser(shareIntent, "Share App via.."));
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
+
 
 }

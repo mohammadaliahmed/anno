@@ -21,6 +21,7 @@
             android:src="@drawable/lock" />
 
         <TextView
+                    android:fontFamily="@font/bathrind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -47,6 +48,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                    android:fontFamily="@font/bathrind"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -65,6 +67,7 @@
                         app:ccp_textColor="#000" />
 
                     <TextView
+                    android:fontFamily="@font/bathrind"
                         android:id="@+id/countryName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -89,6 +92,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:fontFamily="@font/bathrind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -113,6 +117,7 @@
         </LinearLayout>
 
         <TextView
+                    android:fontFamily="@font/bathrind"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -124,11 +129,12 @@
     </LinearLayout>
 
     <Button
+                    android:fontFamily="@font/bathrind"
         android:id="@+id/verify"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:background="@drawable/btn_bg"
         android:inputType="text"
         android:text="Verify"

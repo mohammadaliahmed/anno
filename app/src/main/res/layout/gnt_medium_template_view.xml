@@ -92,6 +92,7 @@
               >
 
             <TextView
+                    android:fontFamily="@font/bathrind"
                 android:id="@+id/primary"
                 android:background="@color/gnt_white"
                 android:textStyle="bold"
@@ -122,6 +123,7 @@
               app:layout_constraintTop_toBottomOf="@id/headline"
               >
             <TextView
+                    android:fontFamily="@font/bathrind"
                 android:background="@drawable/gnt_rounded_corners_shape"
                 android:layout_width="@dimen/gnt_ad_indicator_width"
                 android:gravity="center"
@@ -159,6 +161,7 @@
 
             </RatingBar>
             <TextView
+                    android:fontFamily="@font/bathrind"
                 android:id="@+id/secondary"
                 android:background="@color/gnt_white"
                 android:layout_width="match_parent"
@@ -186,6 +189,7 @@
       </androidx.constraintlayout.widget.ConstraintLayout>
       </androidx.constraintlayout.widget.ConstraintLayout>
         <TextView
+                    android:fontFamily="@font/bathrind"
             android:layout_width="match_parent"
             android:layout_margin="@dimen/gnt_no_size"
             android:layout_height="wrap_content"
@@ -199,6 +203,7 @@
             android:layout_marginBottom="@dimen/gnt_default_margin"
             />
         <Button
+                    android:fontFamily="@font/bathrind"
             android:id="@+id/cta"
             android:layout_width="match_parent"
             android:layout_height="0dp"

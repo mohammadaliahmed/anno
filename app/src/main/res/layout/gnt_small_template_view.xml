@@ -75,6 +75,7 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
+                    android:fontFamily="@font/bathrind"
                             android:id="@+id/primary"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -105,6 +106,7 @@
                         app:layout_constraintTop_toBottomOf="@id/headline">
 
                         <TextView
+                    android:fontFamily="@font/bathrind"
                             android:id="@+id/ad_notification_view"
                             android:layout_width="@dimen/gnt_ad_indicator_width"
                             android:layout_height="@dimen/gnt_ad_indicator_height"
@@ -142,6 +144,7 @@
                         </RatingBar>
 
                         <TextView
+                    android:fontFamily="@font/bathrind"
                             android:id="@+id/secondary"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -162,6 +165,7 @@
                     </LinearLayout>
 
                     <Button
+                    android:fontFamily="@font/bathrind"
                         android:id="@+id/cta"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/gnt_no_size"

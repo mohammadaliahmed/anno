@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appsinventiv.anno.Activites.SingleChatScreen;
@@ -59,6 +60,7 @@ public class CreateGroup extends AppCompatActivity {
     String imageUrl;
     StorageReference mStorageRef;
     private String downloadUrl;
+    RelativeLayout wholeLayout;
 
 
     @Override
@@ -73,6 +75,7 @@ public class CreateGroup extends AppCompatActivity {
         this.setTitle("Create group");
         mDatabase = FirebaseDatabase.getInstance().getReference();
         pickImage = findViewById(R.id.pickImage);
+        wholeLayout = findViewById(R.id.wholeLayout);
         create = findViewById(R.id.create);
         groupName = findViewById(R.id.groupName);
         groupDescription = findViewById(R.id.groupDescription);
@@ -84,6 +87,7 @@ public class CreateGroup extends AppCompatActivity {
                 if (groupName.getText().length() == 0) {
                     groupName.setError("Enter name");
                 } else {
+                    wholeLayout.setVisibility(View.VISIBLE);
                     if (mSelected.size() > 0) {
                         putPictures("" + imageUrl);
                     } else {
@@ -109,6 +113,7 @@ public class CreateGroup extends AppCompatActivity {
     private void initMatisse() {
         Matisse.from(CreateGroup.this)
                 .choose(MimeType.ofImage())
+                .showSingleMediaType(true)
                 .countable(true)
                 .maxSelectable(1)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
@@ -194,6 +199,7 @@ public class CreateGroup extends AppCompatActivity {
         mDatabase.child("Groups").child(key).setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                wholeLayout.setVisibility(View.GONE);
                 CommonUtils.showToast("Group Created");
                 Intent i = new Intent(CreateGroup.this, SingleChatScreen.class);
                 i.putExtra("groupId", key);

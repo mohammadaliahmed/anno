@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">#2A2D3E</color>
     <color name="colorAccent">#FF6160</color>
     <color name="lightBlue">#249BAF</color>
+    <color name="lightBlue2">#5E249BAF</color>
     <color name="grey">#A7A8AE</color>
     <color name="lilac">#9E71A3</color>
     <color name="gnt_test_background_color">#00F4F4F4</color>

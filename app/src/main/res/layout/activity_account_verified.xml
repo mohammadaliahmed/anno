@@ -16,6 +16,7 @@
         android:src="@drawable/verified" />
 
     <TextView
+                    android:fontFamily="@font/bathrind"
         android:id="@+id/cong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +30,7 @@
         android:textStyle="bold" />
 
     <TextView
+                    android:fontFamily="@font/bathrind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cong"
@@ -42,11 +44,12 @@
 
 
     <Button
+                    android:fontFamily="@font/bathrind"
         android:id="@+id/continueTo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:background="@drawable/btn_bg"
         android:inputType="text"
         android:text="Continue"

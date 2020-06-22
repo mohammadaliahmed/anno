@@ -3,14 +3,21 @@ package com.appsinventiv.anno.Activites;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
 
         }
+        getPermissions();
 
         template = findViewById(R.id.my_template);
-        String abc = "content://com.appsinventiv.anno.provider/external_files/Pictures/test/JPEG_20200618_175816.jpg";
 
         recyclerview = findViewById(R.id.recyclerview);
         recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -135,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     public void showNativeAd() {
         String adId = "ca-app-pub-5349923547931941/3486006875";
         String testAdId = "ca-app-pub-3940256099942544/2247696110";
-        String adToShow = testAdId;
+        String adToShow = adId;
         MobileAds.initialize(MainActivity.this, adToShow);
         AdLoader adLoader = new AdLoader.Builder(MainActivity.this, adToShow)
                 .forUnifiedNativeAd(new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
@@ -220,32 +228,85 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.logout) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Alert");
-            builder.setMessage("Sure to logout? ");
-
-            // add the buttons
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    SharedPrefs.logout();
-                    Intent ii = new Intent(MainActivity.this, Splash.class);
-                    ii.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(ii);
-                    finish();
-
-                }
-            });
-            builder.setNegativeButton("Cancel", null);
-
-            // create and show the alert dialog
-            AlertDialog dialog = builder.create();
-            dialog.show();
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void getPermissions() {
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                Manifest.permission.READ_CONTACTS,
+
+
+        };
+
+        if (!hasPermissions(MainActivity.this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        } else {
+            getDataFromDB();
+        }
+    }
+
+    public boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                } else {
+
+                }
+            }
+        }
+        return true;
+    }
+
+    private void getDataFromDB() {
+        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        ArrayList<String> phoneList = new ArrayList<>();
+        HashMap<String, String> phoneMap = new HashMap<>();
+
+        while (phones.moveToNext()) {
+            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            if (phoneNumber.length() > 8) {
+                phoneNumber = phoneNumber.replace(" ", "");
+                phoneNumber = phoneNumber.replace("-", "");
+                String numb = phoneNumber.substring(phoneNumber.length() - 8);
+
+                phoneList.add(numb);
+                phoneMap.put(numb, name);
+
+            }
+
+        }
+        SharedPrefs.setPhoneContactsName(phoneMap);
+        phones.close();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0 &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getDataFromDB();
+            // Permission is granted. Continue the action or workflow
+            // in your app.
+        } else {
+            // Explain to the user that the feature is unavailable because
+            // the features requires a permission that the user has denied.
+            // At the same time, respect the user's decision. Don't link to
+            // system settings in an effort to convince the user to change
+            // their decision.
+        }
+        return;
+
+        // Other 'case' lines to check for other
+        // permissions this app might request.
+
+    }
+
 
 }

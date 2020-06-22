@@ -11,22 +11,14 @@
         android:orientation="vertical">
 
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="20dp"
             android:src="@drawable/profile" />
 
-        <TextView
-                    android:fontFamily="@font/bathrind"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="Create Profile"
-            android:textColor="#fff"
-            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,28 +29,29 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:fontFamily="@font/bathrind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:text="Name"
+                    android:fontFamily="@font/bathrind"
+                    android:text="Nick Name"
                     android:textColor="#000"
                     android:textSize="16sp" />
 
                 <EditText
-                    android:fontFamily="@font/bathrind"
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@null"
-                    android:hint="Enter Name"
+                    android:enabled="false"
+                    android:fontFamily="@font/bathrind"
+                    android:hint="Enter Nick Name"
                     android:inputType="textCapWords"
                     android:padding="10dp" />
             </LinearLayout>
@@ -69,15 +62,59 @@
                 android:background="#DADADA" />
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:fontFamily="@font/bathrind"
+                    android:text="Phone       "
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:fontFamily="@font/bathrind"
+                    android:padding="10dp"
+                    android:textColor="#000"
+
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DADADA" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/chooseAvatar"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/bathrind"
             android:gravity="center"
             android:text="Choose Avatar"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
@@ -90,24 +127,37 @@
     </LinearLayout>
 
     <Button
-                    android:fontFamily="@font/bathrind"
-        android:id="@+id/create"
+        android:id="@+id/update"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
         android:background="@drawable/btn_bg"
+        android:fontFamily="@font/bathrind"
         android:inputType="text"
-        android:text="Create"
+        android:text="Update"
+        android:textColor="#fff"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/edit"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_bg"
+        android:fontFamily="@font/bathrind"
+        android:inputType="text"
+        android:text="Edit"
         android:textColor="#fff" />
 
     <RelativeLayout
+        android:id="@+id/wholeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.8"
-        android:visibility="gone"
-        android:id="@+id/wholeLayout"
-        android:background="#000">
+        android:background="#000"
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="wrap_content"

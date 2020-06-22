@@ -1,7 +1,13 @@
 package com.appsinventiv.anno.Activites.UserManagement;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,10 +17,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appsinventiv.anno.Activites.MainActivity;
+import com.appsinventiv.anno.Activites.SingleChatScreen;
+import com.appsinventiv.anno.Activites.Splash;
 import com.appsinventiv.anno.Adapter.AvatarAdapter;
 import com.appsinventiv.anno.Models.UserModel;
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
+import com.appsinventiv.anno.Utils.Constants;
 import com.appsinventiv.anno.Utils.SharedPrefs;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +46,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class EditProfile extends AppCompatActivity {
 
     EditText name;
-    Button update;
+    Button update, edit;
     RecyclerView recyclerview;
     AvatarAdapter adapter;
     String selectedAvatar;
@@ -45,11 +55,12 @@ public class EditProfile extends AppCompatActivity {
     RelativeLayout wholeLayout;
     CircleImageView image;
     TextView phone;
+    TextView chooseAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_profile);
+        setContentView(R.layout.activity_edit_profile);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -59,6 +70,8 @@ public class EditProfile extends AppCompatActivity {
         phone = findViewById(R.id.phone);
         name = findViewById(R.id.name);
         image = findViewById(R.id.image);
+        edit = findViewById(R.id.edit);
+        chooseAvatar = findViewById(R.id.chooseAvatar);
         wholeLayout = findViewById(R.id.wholeLayout);
         update = findViewById(R.id.update);
         recyclerview = findViewById(R.id.recyclerview);
@@ -75,7 +88,7 @@ public class EditProfile extends AppCompatActivity {
                 selectedAvatar = name;
             }
         });
-        recyclerview.setAdapter(adapter);
+//        recyclerview.setAdapter(adapter);
 
 
         update.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +101,18 @@ public class EditProfile extends AppCompatActivity {
                 } else {
                     updateProfile();
                 }
+            }
+        });
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                chooseAvatar.setVisibility(View.VISIBLE);
+                edit.setVisibility(View.GONE);
+                update.setVisibility(View.VISIBLE);
+                recyclerview.setAdapter(adapter);
+                name.setEnabled(true);
             }
         });
 
@@ -157,18 +182,73 @@ public class EditProfile extends AppCompatActivity {
         });
     }
 
-    @Override
+
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.edit_main, menu);
+        return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
         if (item.getItemId() == android.R.id.home) {
 
 
             finish();
         }
+
+        if (id == R.id.logout) {
+
+
+            final Dialog dialog = new Dialog(EditProfile.this);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            View layout = layoutInflater.inflate(R.layout.alert_custom_dialog, null);
+
+            dialog.setContentView(layout);
+
+            TextView message = layout.findViewById(R.id.message);
+            TextView cancel = layout.findViewById(R.id.cancel);
+            TextView yes = layout.findViewById(R.id.yes);
+
+
+            message.setText("Sure to Logout?");
+            yes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    SharedPrefs.logout();
+                    Intent ii = new Intent(EditProfile.this, Splash.class);
+                    ii.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(ii);
+                    finish();
+                }
+            });
+
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    dialog.dismiss();
+
+                }
+            });
+
+
+            dialog.show();
+
+
+        }
+
+        //noinspection SimplifiableIfStatement
 
         return super.onOptionsItemSelected(item);
     }

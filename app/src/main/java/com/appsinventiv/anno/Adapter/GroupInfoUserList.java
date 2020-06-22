@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GroupInfoUserList extends RecyclerView.Adapter<GroupInfoUserList.ViewHolder> {
     Context context;
@@ -66,19 +68,46 @@ public class GroupInfoUserList extends RecyclerView.Adapter<GroupInfoUserList.Vi
         }
 
 //        holder.name.setText(model.getName());
-        holder.name.setText(SharedPrefs.getPhoneContactsName().get(model.getPhone().substring(model.getPhone().length() - 8)));
+        if (isAdmin) {
+            if (model.getPhone().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
+                holder.kick.setVisibility(View.GONE);
+                holder.admin.setText("*admin");
+            } else {
+                holder.kick.setVisibility(View.VISIBLE);
+                holder.admin.setText("");
 
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            }
+        } else {
+            holder.kick.setVisibility(View.GONE);
+            holder.admin.setText("");
+
+        }
+
+        if (SharedPrefs.getPhoneContactsName().get(model.getPhone().substring(model.getPhone().length() - 8)) == null) {
+            holder.name.setText(model.getName());
+        } else {
+            holder.name.setText(SharedPrefs.getPhoneContactsName().get(model.getPhone().substring(model.getPhone().length() - 8)));
+        }
+
+//        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                if (isAdmin) {
+//                    if (!model.getPhone().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
+//                        callback.onSelected(model.getPhone());
+//
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+
+        holder.kick.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                if (isAdmin) {
-                    if (!model.getPhone().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
-                        callback.onSelected(model.getPhone());
+            public void onClick(View view) {
+                callback.onSelected(model.getPhone());
 
-                    }
-                }
-                return false;
             }
         });
 
@@ -94,12 +123,16 @@ public class GroupInfoUserList extends RecyclerView.Adapter<GroupInfoUserList.Vi
         ImageView image;
         TextView name;
         CheckBox checkbox;
+        ImageView kick;
+        TextView admin;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             image = itemView.findViewById(R.id.image);
             checkbox = itemView.findViewById(R.id.checkbox);
+            kick = itemView.findViewById(R.id.kick);
+            admin = itemView.findViewById(R.id.admin);
         }
     }
 

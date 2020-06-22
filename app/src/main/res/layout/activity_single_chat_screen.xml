@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="95dp"
+            android:fontFamily="@font/bathrind"
             android:text="groupsafsdf"
             android:textColor="#fff"
             android:textSize="16sp"
@@ -68,7 +69,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/memesLayout"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="220dp"
         android:layout_above="@id/adas"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="60dp"
@@ -86,7 +87,7 @@
                 android:id="@+id/sliding_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                app:tabMode="fixed"
+                app:tabMode="scrollable"
                 app:tabTextColor="@color/colorPrimary" />
 
             <androidx.viewpager.widget.ViewPager
@@ -128,6 +129,7 @@
                 android:id="@+id/you"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/bathrind"
                 android:lines="1"
                 android:text="Reply To:"
                 android:textColor="#000"
@@ -138,6 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/you"
+                android:fontFamily="@font/bathrind"
                 android:maxLines="5"
                 android:text=""
                 android:textColor="#000" />

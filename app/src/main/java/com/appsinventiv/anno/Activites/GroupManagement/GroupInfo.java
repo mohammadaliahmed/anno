@@ -1,16 +1,19 @@
 package com.appsinventiv.anno.Activites.GroupManagement;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +22,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appsinventiv.anno.Activites.MainActivity;
 import com.appsinventiv.anno.Activites.Phone.RequestCode;
 import com.appsinventiv.anno.Activites.SingleChatScreen;
+import com.appsinventiv.anno.Activites.Splash;
 import com.appsinventiv.anno.Activites.UserManagement.AddUsersToGroup;
+import com.appsinventiv.anno.Activites.UserManagement.EditProfile;
+import com.appsinventiv.anno.Activites.UserManagement.ListOfUsers;
 import com.appsinventiv.anno.Adapter.GroupInfoUserList;
 import com.appsinventiv.anno.Models.GroupModel;
 import com.appsinventiv.anno.Models.UserModel;
@@ -86,6 +93,9 @@ public class GroupInfo extends AppCompatActivity {
     private String imageUrl;
     private String downloadUrl;
     ImageView addUsers;
+    RelativeLayout wholeLayout;
+    Button editGroup;
+    boolean canEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +113,8 @@ public class GroupInfo extends AppCompatActivity {
 
         groupDescription = findViewById(R.id.groupDescription);
         addUsers = findViewById(R.id.addUsers);
+        editGroup = findViewById(R.id.editGroup);
+        wholeLayout = findViewById(R.id.wholeLayout);
         pickImage = findViewById(R.id.pickImage);
         participantsCount = findViewById(R.id.participantsCount);
         edName = findViewById(R.id.edName);
@@ -135,6 +147,7 @@ public class GroupInfo extends AppCompatActivity {
                 if (name.getText().length() == 0) {
                     name.setError("Enter name");
                 } else {
+                    wholeLayout.setVisibility(View.VISIBLE);
                     if (mSelected.size() > 0) {
                         putPictures(imageUrl);
                     } else {
@@ -144,6 +157,7 @@ public class GroupInfo extends AppCompatActivity {
                         mDatabase.child("Groups").child(groupId).updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                wholeLayout.setVisibility(View.GONE);
                                 CommonUtils.showToast("Updated");
                             }
                         });
@@ -159,7 +173,9 @@ public class GroupInfo extends AppCompatActivity {
             public void onClick(View view) {
                 if (groupModel.getAdminId().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
                     mSelected.clear();
-                    initMatisse();
+                    if (canEdit) {
+                        initMatisse();
+                    }
                 }
 
             }
@@ -174,11 +190,19 @@ public class GroupInfo extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        editGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editLayout();
+            }
+        });
     }
 
     private void initMatisse() {
         Matisse.from(this)
                 .choose(MimeType.ofImage())
+                .showSingleMediaType(true)
                 .countable(true)
                 .maxSelectable(1)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
@@ -238,6 +262,7 @@ public class GroupInfo extends AppCompatActivity {
                                 mDatabase.child("Groups").child(groupId).updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        wholeLayout.setVisibility(View.GONE);
                                         CommonUtils.showToast("Updated");
                                     }
                                 });
@@ -262,14 +287,27 @@ public class GroupInfo extends AppCompatActivity {
 
 
     private void showRemoveAlert(final String id) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Alert");
-        builder.setMessage("Remove this member? ");
 
-        // add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+        final Dialog dialog = new Dialog(GroupInfo.this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View layout = layoutInflater.inflate(R.layout.alert_custom_dialog, null);
+
+        dialog.setContentView(layout);
+
+        TextView message = layout.findViewById(R.id.message);
+        TextView cancel = layout.findViewById(R.id.cancel);
+        TextView yes = layout.findViewById(R.id.yes);
+
+
+        message.setText("Kick this member?");
+        yes.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(View view) {
+                dialog.dismiss();
                 mDatabase.child("Groups").child(groupId).child("members").child(id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -277,25 +315,46 @@ public class GroupInfo extends AppCompatActivity {
 
                     }
                 });
+            }
+        });
+
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
 
             }
         });
-        builder.setNegativeButton("Cancel", null);
 
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
+
         dialog.show();
+
     }
 
     private void showLeaveAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Alert");
-        builder.setMessage("Do you want to leave this group? ");
 
-        // add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View layout = layoutInflater.inflate(R.layout.alert_custom_dialog, null);
+
+        dialog.setContentView(layout);
+
+        TextView message = layout.findViewById(R.id.message);
+        TextView cancel = layout.findViewById(R.id.cancel);
+        TextView yes = layout.findViewById(R.id.yes);
+
+
+        message.setText("Do you want to leave this group?");
+        yes.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(View view) {
+                dialog.dismiss();
                 mDatabase.child("Groups").child(groupId).child("members").child(SharedPrefs.getUserModel().getPhone()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -306,13 +365,20 @@ public class GroupInfo extends AppCompatActivity {
                         finish();
                     }
                 });
+            }
+        });
+
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
 
             }
         });
-        builder.setNegativeButton("Cancel", null);
 
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
+
         dialog.show();
     }
 
@@ -330,21 +396,27 @@ public class GroupInfo extends AppCompatActivity {
 
 
                         if (groupModel.getAdminId().equalsIgnoreCase(SharedPrefs.getUserModel().getPhone())) {
-                            //isadmin
-                            addUsers.setVisibility(View.VISIBLE);
-                            update.setVisibility(View.VISIBLE);
-                            edName.setVisibility(View.VISIBLE);
-                            groupName.setVisibility(View.GONE);
+//                            //isadmin
+                            editGroup.setVisibility(View.VISIBLE);
                             leaveGroup.setVisibility(View.GONE);
-                            adapter.setAdmin(true);
-                            groupDescription.setFocusable(true);
+//                            addUsers.setVisibility(View.VISIBLE);
+//                            update.setVisibility(View.VISIBLE);
+//                            edName.setVisibility(View.VISIBLE);
+//                            groupName.setVisibility(View.GONE);
+//                            leaveGroup.setVisibility(View.GONE);
+//                            adapter.setAdmin(true);
+//                            groupDescription.setFocusable(true);
                         } else {
-                            groupDescription.setFocusable(false);
-                            addUsers.setVisibility(View.GONE);
-                            update.setVisibility(View.GONE);
-                            edName.setVisibility(View.GONE);
-                            groupName.setVisibility(View.VISIBLE);
+                            editGroup.setVisibility(View.GONE);
+                            leaveGroup.setVisibility(View.VISIBLE);
+
+
                         }
+                        groupDescription.setEnabled(false);
+                        addUsers.setVisibility(View.GONE);
+                        update.setVisibility(View.GONE);
+                        edName.setVisibility(View.GONE);
+                        groupName.setVisibility(View.VISIBLE);
 
                         try {
                             Glide.with(GroupInfo.this).load(groupModel.getPicUrl()).placeholder(R.drawable.profile).into(pickImage);
@@ -414,6 +486,7 @@ public class GroupInfo extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
@@ -428,5 +501,17 @@ public class GroupInfo extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void editLayout() {
+        canEdit = true;
+        editGroup.setVisibility(View.GONE);
+        addUsers.setVisibility(View.VISIBLE);
+        update.setVisibility(View.VISIBLE);
+        edName.setVisibility(View.VISIBLE);
+        groupName.setVisibility(View.GONE);
+        leaveGroup.setVisibility(View.GONE);
+        adapter.setAdmin(true);
+        groupDescription.setEnabled(true);
     }
 }

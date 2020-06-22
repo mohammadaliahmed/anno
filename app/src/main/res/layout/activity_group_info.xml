@@ -66,6 +66,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:fontFamily="@font/bathrind"
                     android:text=""
                     android:textColor="#fff"
                     android:textSize="20sp">
@@ -79,19 +80,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
+                android:fontFamily="@font/bathrind"
 
                 android:text="Group Description"
                 android:textColor="#fff" />
 
             <EditText
-                android:layout_marginTop="5dp"
                 android:id="@+id/groupDescription"
+
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/edit_text_bg"
+                android:background="@null"
+                android:fontFamily="@font/bathrind"
                 android:gravity="top"
                 android:hint="Enter Group Description..."
                 android:inputType="textCapSentences|textMultiLine"
@@ -113,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
+                android:fontFamily="@font/bathrind"
                 android:text=""
                 android:textColor="#fff" />
 
@@ -126,21 +131,22 @@
                     android:layout_height="wrap_content" />
             </RelativeLayout>
 
+            <Button
+                android:id="@+id/leaveGroup"
+                android:layout_width="match_parent"
+
+                android:layout_height="35dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="20dp"
+
+                android:background="@drawable/btn_bg"
+                android:fontFamily="@font/bathrind"
+                android:inputType="text"
+                android:text="Leave Group"
+                android:textColor="#fff" />
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/leaveGroup"
-
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-
-        android:layout_margin="20dp"
-        android:background="@drawable/btn_bg"
-        android:inputType="text"
-        android:text="Leave Group"
-        android:textColor="#fff" />
 
     <ImageView
         android:id="@+id/addUsers"
@@ -150,6 +156,34 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/wholeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.8"
+        android:background="@color/colorPrimary"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/editGroup"
+        android:layout_width="match_parent"
+
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_bg"
+        android:fontFamily="@font/bathrind"
+        android:inputType="text"
+        android:text="Edit "
+        android:textColor="#fff"
         android:visibility="gone" />
 
 

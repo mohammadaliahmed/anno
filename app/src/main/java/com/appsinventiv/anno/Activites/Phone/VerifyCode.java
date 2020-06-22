@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,8 @@ public class VerifyCode extends AppCompatActivity {
     HashMap<String, UserModel> userMap = new HashMap<>();
     private String mVerificationId;
 
+    RelativeLayout wholeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,7 @@ public class VerifyCode extends AppCompatActivity {
         sendAgain = findViewById(R.id.sendAgain);
         changen = findViewById(R.id.changen);
         validate = findViewById(R.id.validate);
+        wholeLayout = findViewById(R.id.wholeLayout);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         phoneNumber = getIntent().getStringExtra("number");
         number.setText(phoneNumber);
@@ -85,12 +89,14 @@ public class VerifyCode extends AppCompatActivity {
 //                checkUser();
 
                 if (!pin.getValue().equalsIgnoreCase("")) {
+                    wholeLayout.setVisibility(View.VISIBLE);
                     PhoneAuthCredential provider = PhoneAuthProvider.getCredential(mVerificationId, pin.getValue());
                     final FirebaseAuth auth = FirebaseAuth.getInstance();
                     auth.signInWithCredential(provider).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
 //                        CommonUtils.showToast("" + authResult);
+                            wholeLayout.setVisibility(View.GONE);
                             CommonUtils.showToast("Successfully verified");
                             checkUser();
                             SharedPrefs.setPhone(phoneNumber);
@@ -99,12 +105,16 @@ public class VerifyCode extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
 //                            CommonUtils.showToast(e.getMessage());
+                            wholeLayout.setVisibility(View.GONE);
+
                             CommonUtils.showToast("Invalid Pin");
                         }
                     });
                 } else {
                     CommonUtils.showToast("Enter pin");
                 }
+
+
 //                if (!pin.getValue().equalsIgnoreCase("")) {
 //                    if (smsCode != null) {
 //                        if (smsCode.equalsIgnoreCase(pin.getValue())) {
@@ -153,9 +163,11 @@ public class VerifyCode extends AppCompatActivity {
             SharedPrefs.setUserModel(userMap.get(phoneNumber));
             Intent i = new Intent(VerifyCode.this, MainActivity.class);
             startActivity(i);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             CommonUtils.showToast("Logged in successfully");
         } else {
             Intent i = new Intent(VerifyCode.this, AccountVerified.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         }
         finish();

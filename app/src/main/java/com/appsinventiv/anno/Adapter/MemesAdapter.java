@@ -26,6 +26,12 @@ public class MemesAdapter extends RecyclerView.Adapter<MemesAdapter.ViewHolder> 
     Context context;
     ArrayList<String> itemList;
     DatabaseReference mDatabase;
+    boolean isGif;
+
+    public void setGif(boolean gif) {
+        isGif = gif;
+        notifyDataSetChanged();
+    }
 
     public MemesAdapter(Context context, ArrayList<String> itemList) {
         this.context = context;

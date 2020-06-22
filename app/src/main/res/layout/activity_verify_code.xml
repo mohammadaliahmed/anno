@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:text="Verify uour mobile number"
+            android:fontFamily="@font/bathrind"
+            android:text="Verify your mobile number"
             android:textColor="#000"
             android:textSize="16sp" />
 
@@ -34,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
-            android:text="A 5 digit code has been sent to" />
+            android:fontFamily="@font/bathrind"
+            android:text="A 6 digit code has been sent to" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -48,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:fontFamily="@font/bathrind"
                 android:text=""
                 android:textStyle="bold" />
 
@@ -56,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:fontFamily="@font/bathrind"
                 android:padding="5dp"
                 android:text="Change "
                 android:textColor="#03A9F4"
@@ -68,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/bathrind"
             android:gravity="center"
             android:text="Tap to verify your account with your phone number."
             android:textColor="#8D8D8D" />
@@ -90,14 +95,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/bathrind"
             android:text="Didnt recieved the code?" />
 
         <TextView
+            android:id="@+id/sendAgain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:id="@+id/sendAgain"
+            android:fontFamily="@font/bathrind"
             android:padding="5dp"
             android:text="Send Again"
             android:textColor="@color/colorAccent" />
@@ -108,6 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/bathrind"
             android:padding="5dp"
             android:text="Change Number"
             android:textColor="@color/colorAccent" />
@@ -116,12 +124,26 @@
     <Button
         android:id="@+id/validate"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:background="@drawable/btn_bg"
+        android:fontFamily="@font/bathrind"
         android:inputType="text"
         android:text="Validate"
         android:textColor="#fff" />
+
+    <RelativeLayout
+        android:id="@+id/wholeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_grey"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
 </RelativeLayout>
