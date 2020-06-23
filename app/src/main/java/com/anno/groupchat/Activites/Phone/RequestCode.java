@@ -31,7 +31,8 @@ public class RequestCode extends AppCompatActivity {
         countryName = findViewById(R.id.countryName);
 
         ccp = (CountryCodePicker) findViewById(R.id.ccp);
-        foneCode = "+92";
+        foneCode = ccp.getDefaultCountryCode();
+        countryName.setText("(" + ccp.getDefaultCountryName() + ")");
 
         verify.setOnClickListener(new View.OnClickListener() {
             @Override
