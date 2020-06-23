@@ -64,6 +64,7 @@ public class EditProfile extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+getSupportActionBar().setElevation(0);
         }
         this.setTitle("My profile");
         mDatabase = FirebaseDatabase.getInstance().getReference();

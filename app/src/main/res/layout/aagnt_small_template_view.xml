@@ -73,7 +73,6 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
-                    android:fontFamily="@font/bathrind"
                             android:id="@+id/primary"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -81,8 +80,9 @@
                             android:layout_marginTop="@dimen/gnt_no_margin"
                             android:layout_marginEnd="@dimen/gnt_no_margin"
                             android:layout_marginBottom="@dimen/gnt_no_margin"
+                            android:fontFamily="@font/bathrind"
                             android:lines="1"
-                            android:textColor="@color/gnt_gray"
+                            android:textColor="@color/gnt_white"
                             android:textSize="@dimen/gnt_text_size_large"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -103,13 +103,13 @@
                         app:layout_constraintTop_toBottomOf="@id/headline">
 
                         <TextView
-                    android:fontFamily="@font/bathrind"
                             android:id="@+id/ad_notification_view"
                             android:layout_width="@dimen/gnt_ad_indicator_width"
                             android:layout_height="@dimen/gnt_ad_indicator_height"
                             android:layout_marginStart="@dimen/gnt_no_margin"
                             android:layout_marginTop="@dimen/gnt_ad_indicator_top_margin"
                             android:layout_marginEnd="@dimen/gnt_default_margin"
+                            android:fontFamily="@font/bathrind"
                             android:gravity="center"
                             android:text="Ad"
                             android:textColor="@color/gnt_ad_green"
@@ -129,7 +129,7 @@
                             android:layout_marginBottom="@dimen/gnt_no_margin"
                             android:lines="1"
                             android:numStars="0"
-                            android:textColor="@color/gnt_gray"
+                            android:textColor="@color/gnt_white"
                             android:textSize="@dimen/gnt_text_size_small"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -139,7 +139,6 @@
                         </RatingBar>
 
                         <TextView
-                    android:fontFamily="@font/bathrind"
                             android:id="@+id/secondary"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -147,9 +146,10 @@
                             android:layout_marginTop="@dimen/gnt_no_margin"
                             android:layout_marginEnd="@dimen/gnt_no_margin"
                             android:layout_marginBottom="@dimen/gnt_no_margin"
+                            android:fontFamily="@font/bathrind"
                             android:gravity="top"
                             android:lines="1"
-                            android:textColor="@color/gnt_gray"
+                            android:textColor="@color/gnt_white"
                             android:textSize="@dimen/gnt_text_size_small"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -159,11 +159,11 @@
                     </LinearLayout>
 
                     <Button
-                    android:fontFamily="@font/bathrind"
                         android:id="@+id/cta"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/gnt_no_size"
                         android:background="@color/gnt_blue"
+                        android:fontFamily="@font/bathrind"
                         android:lines="1"
                         android:textColor="@color/gnt_white"
                         app:layout_constraintBottom_toBottomOf="parent"

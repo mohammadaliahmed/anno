@@ -162,6 +162,7 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setElevation(0);
         }
 
         getPermissions();
@@ -259,6 +260,7 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
                     memeLayoutShowing = true;
                     memesLayout.setVisibility(View.VISIBLE);
                     setupMemesLayout();
+                    KeyboardUtils.forceCloseKeyboard(rootView);
 
                 }
             }
@@ -323,6 +325,11 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
         messagesList = SharedPrefs.getInsideMessages(groupId);
         if (messagesList == null) {
             messagesList = new ArrayList<>();
+        }
+        HashMap<String, Boolean> unreadMap = SharedPrefs.getUnreadMessages();
+        if (unreadMap != null) {
+            unreadMap.put(groupId, false);
+            SharedPrefs.setUnreadMessages(unreadMap);
         }
 
         adapter = new MessagesAdapter(this, messagesList, new MessagesAdapter.MessagesAdapterCallback() {
@@ -459,12 +466,13 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
                     Collections.sort(messagesList, new Comparator<MessageModel>() {
                         @Override
                         public int compare(MessageModel listData, MessageModel t1) {
-                            Long ob1 = listData.getTime();
-                            Long ob2 = t1.getTime();
+                            String ob1 = listData.getId();
+                            String ob2 = t1.getId();
                             return ob1.compareTo(ob2);
 
                         }
                     });
+                    
                     SharedPrefs.setInsideMessages(messagesList, groupId);
                     keysList.clear();
                     for (MessageModel keys : messagesList) {

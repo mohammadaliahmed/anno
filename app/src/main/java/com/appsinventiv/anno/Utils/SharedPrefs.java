@@ -99,18 +99,18 @@ public class SharedPrefs {
         return playersList;
     }
 
-    public static void setDeletedMessagesId(HashMap<Integer, Integer> itemList) {
+    public static void setUnreadMessages(HashMap<String, Boolean> itemList) {
 
         Gson gson = new Gson();
         String json = gson.toJson(itemList);
-        preferenceSetter("setDeletedMessagesId", json);
+        preferenceSetter("setUnreadMessages", json);
     }
 
-    public static HashMap<Integer, Integer> getDeletedMessagesId() {
+    public static HashMap<String , Boolean> getUnreadMessages() {
         Gson gson = new Gson();
 
-        HashMap<Integer, Integer> retMap = new Gson().fromJson(
-                preferenceGetter("setDeletedMessagesId"), new TypeToken<HashMap<Integer, Integer>>() {
+        HashMap<String, Boolean> retMap = new Gson().fromJson(
+                preferenceGetter("setUnreadMessages"), new TypeToken<HashMap<String, Boolean>>() {
                 }.getType()
         );
 

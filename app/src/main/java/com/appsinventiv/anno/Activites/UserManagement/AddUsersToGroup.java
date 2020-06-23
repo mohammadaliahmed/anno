@@ -65,6 +65,7 @@ public class AddUsersToGroup extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+getSupportActionBar().setElevation(0);
         }
         this.setTitle("Select contact");
 
@@ -127,6 +128,8 @@ public class AddUsersToGroup extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
+                    userList.clear();
+                    userMap.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         try {
                             UserModel model = snapshot.getValue(UserModel.class);

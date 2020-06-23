@@ -70,6 +70,7 @@ public class CreateGroup extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+getSupportActionBar().setElevation(0);
         }
         getPermissions();
         this.setTitle("Create group");

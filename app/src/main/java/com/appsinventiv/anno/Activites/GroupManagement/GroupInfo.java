@@ -107,6 +107,7 @@ public class GroupInfo extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setElevation(0);
         }
         this.setTitle("Group info");
         groupId = getIntent().getStringExtra("groupId");
@@ -425,8 +426,10 @@ public class GroupInfo extends AppCompatActivity {
                         }
                         membersList.clear();
                         phoneListt.clear();
-                        for (String phone : groupModel.getMembers().values()) {
-                            getMembersFromServer(phone);
+                        if (groupModel.getMembers().size() > 2) {
+                            for (String phone : groupModel.getMembers().values()) {
+                                getMembersFromServer(phone);
+                            }
                         }
                     }
 

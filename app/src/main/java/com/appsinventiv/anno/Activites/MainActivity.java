@@ -5,13 +5,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
@@ -67,10 +70,12 @@ public class MainActivity extends AppCompatActivity {
     HashMap<String, GroupModel> groupModelHashMap = new HashMap<>();
     TemplateView template;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
 
@@ -141,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showNativeAd() {
+        template.setVisibility(View.VISIBLE);
         String adId = "ca-app-pub-5349923547931941/3486006875";
         String testAdId = "ca-app-pub-3940256099942544/2247696110";
         String adToShow = adId;
@@ -177,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
                         if (model != null) {
                             if (model.getMembers().containsKey(SharedPrefs.getUserModel().getPhone())) {
                                 groupModelHashMap.put(snapshot.getKey(), model);
+                                updateUnreadMap(snapshot.getKey());
+
                             }
                         }
                     }
@@ -209,6 +217,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //
+    }
+
+    private void updateUnreadMap(String key) {
+//        HashMap<String, Boolean> map = SharedPrefs.getUnreadMessages();
+//        if (map != null) {
+//            map.put(key, true);
+//            SharedPrefs.setUnreadMessages(map);
+//        } else {
+//            map = new HashMap<>();
+//            map.put(key, true);
+//            SharedPrefs.setUnreadMessages(map);
+//        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -260,6 +280,15 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("newMsg"));
+        adapter.updateUnread();
+
+    }
+
     private void getDataFromDB() {
         Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         ArrayList<String> phoneList = new ArrayList<>();
@@ -305,6 +334,26 @@ public class MainActivity extends AppCompatActivity {
 
         // Other 'case' lines to check for other
         // permissions this app might request.
+
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            adapter.updateUnread();
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        } catch (Exception e) {
+
+        }
+        super.onPause();
+
 
     }
 

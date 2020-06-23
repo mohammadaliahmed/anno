@@ -18,6 +18,7 @@ import com.appsinventiv.anno.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import androidx.core.app.NotificationCompat;
@@ -81,25 +82,42 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void handleNow(String notificationTitle, String messageBody, String type) {
 
-        int num = (int) System.currentTimeMillis();
+        int num = 0;
+        for (int i = 0; i < Id.length(); i++) {
+            num = num + (Id.charAt(i));
+
+        }
+
         /**Creates an explicit intent for an Activity in your app**/
         Intent resultIntent = null;
         resultIntent = new Intent(this, MainActivity.class);
 
         if (type.equalsIgnoreCase("chat")) {
+            HashMap<String, Boolean> map = SharedPrefs.getUnreadMessages();
+            if (map != null) {
+                map.put(Id, true);
+                SharedPrefs.setUnreadMessages(map);
+            } else {
+                map = new HashMap<>();
+                map.put(Id, true);
+                SharedPrefs.setUnreadMessages(map);
+
+            }
 
             resultIntent = new Intent(this, SingleChatScreen.class);
             resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             resultIntent.putExtra("groupId", Id);
             resultIntent.putExtra("groupName", Name);
 
+            sendMessage();
         }
-//        else if (type.equalsIgnoreCase(Constants.NOTIFICATION_CHAT)) {
+
+        //        else if (type.equalsIgnoreCase(Constants.NOTIFICATION_CHAT)) {
 //
 //            resultIntent = new Intent(this, ChattingScreen.class);
 //            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //            resultIntent.putExtra("roomId", Integer.parseInt(Id));
-//            sendMessage();
+
 //
 //        }
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this,
@@ -109,12 +127,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.mipmap.ic_launcher);
         mBuilder.setContentTitle(notificationTitle)
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setContentIntent(resultPendingIntent);
+                .
 
-        mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+                        setContentText(messageBody)
+                .
+
+                        setAutoCancel(true)
+                .
+
+                        setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .
+
+                        setContentIntent(resultPendingIntent);
+
+        mNotificationManager = (NotificationManager) this.
+
+                getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_HIGH;

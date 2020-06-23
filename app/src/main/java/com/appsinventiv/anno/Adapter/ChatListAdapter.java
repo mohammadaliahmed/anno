@@ -2,6 +2,7 @@ package com.appsinventiv.anno.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.appsinventiv.anno.Models.MessageModel;
 import com.appsinventiv.anno.Models.UserModel;
 import com.appsinventiv.anno.R;
 import com.appsinventiv.anno.Utils.CommonUtils;
+import com.appsinventiv.anno.Utils.SharedPrefs;
 import com.bumptech.glide.Glide;
 
 import com.google.android.gms.ads.AdListener;
@@ -29,6 +31,7 @@ import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -53,6 +56,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public void setItemList(ArrayList<GroupModel> itemList) {
         this.itemList = itemList;
         notifyDataSetChanged();
+    }
+
+    public void updateUnread() {
+        if (itemList != null && itemList.size() > 0) {
+
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull
@@ -81,7 +91,20 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         switch (viewType) {
             case CONTENT_TYPE:
 //                final GroupModel model = itemList.get(position);
+
+                HashMap<String, Boolean> map = SharedPrefs.getUnreadMessages();
+
                 final GroupModel model = itemList.get(getRealPosition(position));
+                if (map != null && map.get(model.getId()) != null && map.get(model.getId())) {
+                    holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
+                    holder.message.setTypeface(holder.message.getTypeface(), Typeface.BOLD);
+                    holder.unread_dot.setVisibility(View.VISIBLE);
+
+                } else {
+                    holder.name.setTypeface(holder.name.getTypeface(), Typeface.NORMAL);
+                    holder.message.setTypeface(holder.message.getTypeface(), Typeface.NORMAL);
+                    holder.unread_dot.setVisibility(View.GONE);
+                }
 
                 holder.name.setText(model.getName());
                 holder.message.setText(model.getText());
@@ -91,6 +114,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 } catch (Exception e) {
 
                 }
+
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -102,13 +126,15 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
                     }
                 });
+
                 break;
             case AD_TYPE:
 //                AdRequest adRequest = new AdRequest.Builder().build();
 //                holder.adView.loadAd(adRequest);
+                holder.template.setVisibility(View.VISIBLE);
                 String adId = "ca-app-pub-5349923547931941/3486006875";
                 String testAdId = "ca-app-pub-3940256099942544/2247696110";
-                String adToShow = testAdId;
+                String adToShow = adId;
                 MobileAds.initialize(context, adToShow);
                 AdLoader adLoader = new AdLoader.Builder(context, adToShow)
                         .forUnifiedNativeAd(new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
@@ -145,7 +171,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        if (position > 0 && position % LIST_AD_DELTA == 0)
+        if (position > 0 && position == 5)
             return AD_TYPE;
         return CONTENT_TYPE;
     }
@@ -166,6 +192,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         AdView adView;
         TemplateView template;
+        View unread_dot;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -176,6 +203,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             time = itemView.findViewById(R.id.time);
             adView = itemView.findViewById(R.id.adView);
             template = itemView.findViewById(R.id.my_template);
+            unread_dot = itemView.findViewById(R.id.unread_dot);
         }
     }
 

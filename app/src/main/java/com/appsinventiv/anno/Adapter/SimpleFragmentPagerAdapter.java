@@ -57,7 +57,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return "GIFs";
             case 2:
-                return "Reat";
+                return "Reacts";
             case 3:
                 return "18+";
 
