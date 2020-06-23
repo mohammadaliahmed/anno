@@ -26,7 +26,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_add" />
 
-    <com.appsinventiv.anno.Activites.NativeAds.TemplateView
+    <com.anno.groupchat.Activites.NativeAds.TemplateView
         android:id="@+id/my_template"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

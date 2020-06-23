@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.appsinventiv.anno">
+    package="com.anno.groupchat">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -10,7 +10,7 @@
 
 
     <application
-        android:name=".Utils.ApplicationClass"
+        android:name="com.anno.groupchat.Utils.ApplicationClass"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,12 +20,12 @@
         android:theme="@style/AppTheme"
 
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activites.MainActivity">
+        <activity android:name="com.anno.groupchat.Activites.MainActivity">
 
         </activity>
         <activity
 
-            android:name=".Activites.Splash"
+            android:name="com.anno.groupchat.Activites.Splash"
             android:theme="@style/AppBaseThemeDark">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,42 +34,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activites.Phone.RequestCode"
+            android:name="com.anno.groupchat.Activites.Phone.RequestCode"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Activites.Phone.VerifyCode"
+            android:name="com.anno.groupchat.Activites.Phone.VerifyCode"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Activites.Phone.AccountVerified"
+            android:name="com.anno.groupchat.Activites.Phone.AccountVerified"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activites.UserManagement.CreateProfile"
+            android:name="com.anno.groupchat.Activites.UserManagement.CreateProfile"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".Activites.UserManagement.ListOfUsers" />
+        <activity android:name="com.anno.groupchat.Activites.UserManagement.ListOfUsers" />
         <activity
-            android:name=".Activites.SingleChatScreen"
+            android:name="com.anno.groupchat.Activites.SingleChatScreen"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activites.GroupManagement.CreateGroup" />
+        <activity android:name="com.anno.groupchat.Activites.GroupManagement.CreateGroup" />
         <activity
-            android:name=".Activites.GroupManagement.GroupInfo"
+            android:name="com.anno.groupchat.Activites.GroupManagement.GroupInfo"
             android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".Activites.UserManagement.AddUsersToGroup" />
+        <activity android:name="com.anno.groupchat.Activites.UserManagement.AddUsersToGroup" />
         <activity
-            android:name=".Activites.ViewPictures"
+            android:name="com.anno.groupchat.Activites.ViewPictures"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activites.UserManagement.EditProfile"
+            android:name="com.anno.groupchat.Activites.UserManagement.EditProfile"
             android:windowSoftInputMode="adjustNothing" />
 
-        <service android:name=".Utils.MyFirebaseMessagingService">
+        <service android:name="com.anno.groupchat.Utils.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <provider
-            android:name=".provider.GenericFileProvider"
-            android:authorities="com.appsinventiv.anno.provider"
+            android:name="com.anno.groupchat.provider.GenericFileProvider"
+            android:authorities="com.anno.groupchat.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
