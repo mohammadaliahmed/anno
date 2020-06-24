@@ -31,7 +31,7 @@ public class RequestCode extends AppCompatActivity {
         countryName = findViewById(R.id.countryName);
 
         ccp = (CountryCodePicker) findViewById(R.id.ccp);
-        foneCode = ccp.getDefaultCountryCode();
+        foneCode = "+" + ccp.getDefaultCountryCode();
         countryName.setText("(" + ccp.getDefaultCountryName() + ")");
 
         verify.setOnClickListener(new View.OnClickListener() {
@@ -49,7 +49,7 @@ public class RequestCode extends AppCompatActivity {
         ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
             public void onCountrySelected(Country selectedCountry) {
-                foneCode = selectedCountry.getPhoneCode();
+                foneCode = "+"+selectedCountry.getPhoneCode();
                 countryName.setText("(" + selectedCountry.getName() + ")");
             }
         });

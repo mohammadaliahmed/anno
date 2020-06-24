@@ -76,37 +76,37 @@ public class VerifyCode extends AppCompatActivity {
             }
         });
 
-//        requestCode();
+        requestCode();
         validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkUser();
+//                checkUser();
 
-//                if (!pin.getValue().equalsIgnoreCase("")) {
-//                    wholeLayout.setVisibility(View.VISIBLE);
-//                    PhoneAuthCredential provider = PhoneAuthProvider.getCredential(mVerificationId, pin.getValue());
-//                    final FirebaseAuth auth = FirebaseAuth.getInstance();
-//                    auth.signInWithCredential(provider).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-//                        @Override
-//                        public void onSuccess(AuthResult authResult) {
-////                        CommonUtils.showToast("" + authResult);
-//                            wholeLayout.setVisibility(View.GONE);
-//                            CommonUtils.showToast("Successfully verified");
-//                            checkUser();
-//                            SharedPrefs.setPhone(phoneNumber);
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-////                            CommonUtils.showToast(e.getMessage());
-//                            wholeLayout.setVisibility(View.GONE);
-//
-//                            CommonUtils.showToast("Invalid Pin");
-//                        }
-//                    });
-//                } else {
-//                    CommonUtils.showToast("Enter pin");
-//                }
+                if (!pin.getValue().equalsIgnoreCase("")) {
+                    wholeLayout.setVisibility(View.VISIBLE);
+                    PhoneAuthCredential provider = PhoneAuthProvider.getCredential(mVerificationId, pin.getValue());
+                    final FirebaseAuth auth = FirebaseAuth.getInstance();
+                    auth.signInWithCredential(provider).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+//                        CommonUtils.showToast("" + authResult);
+                            wholeLayout.setVisibility(View.GONE);
+                            CommonUtils.showToast("Successfully verified");
+                            checkUser();
+                            SharedPrefs.setPhone(phoneNumber);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+//                            CommonUtils.showToast(e.getMessage());
+                            wholeLayout.setVisibility(View.GONE);
+
+                            CommonUtils.showToast("Invalid Pin");
+                        }
+                    });
+                } else {
+                    CommonUtils.showToast("Enter pin");
+                }
 
 
 //                if (!pin.getValue().equalsIgnoreCase("")) {
