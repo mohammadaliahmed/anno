@@ -72,7 +72,7 @@ public class ListOfUsers extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-getSupportActionBar().setElevation(0);
+            getSupportActionBar().setElevation(0);
         }
         this.setTitle("Select contact");
 
@@ -80,8 +80,12 @@ getSupportActionBar().setElevation(0);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(ListOfUsers.this, CreateGroup.class));
-                finish();
+                if (selectedMap.size() >= 2) {
+                    startActivity(new Intent(ListOfUsers.this, CreateGroup.class));
+                    finish();
+                } else {
+                    CommonUtils.showToast("Please select one or more members");
+                }
 
             }
         });
@@ -96,13 +100,14 @@ getSupportActionBar().setElevation(0);
 
             }
         });
+        selectedMap.put(SharedPrefs.getUserModel().getPhone(), SharedPrefs.getUserModel().getPhone());
 
         recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         adapter = new UserListAdapter(this, userList, new UserListAdapter.UserListAdapterCallback() {
             @Override
             public void onSelected(String id) {
                 selectedMap.put(id, id);
-                ListOfUsers.this.setTitle(selectedMap.size() + " contacts selected");
+                ListOfUsers.this.setTitle((selectedMap.size() - 1) + " contacts selected");
                 next.setVisibility(View.VISIBLE);
 
             }
@@ -112,7 +117,7 @@ getSupportActionBar().setElevation(0);
                 selectedMap.remove(id);
                 if (selectedMap.size() > 0) {
                     next.setVisibility(View.VISIBLE);
-                    ListOfUsers.this.setTitle(selectedMap.size() + " contacts selected");
+                    ListOfUsers.this.setTitle((selectedMap.size() - 1) + " contacts selected");
                 } else {
                     next.setVisibility(View.GONE);
                     ListOfUsers.this.setTitle("Select contact");
@@ -274,16 +279,14 @@ getSupportActionBar().setElevation(0);
         while (phones.moveToNext()) {
             String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            phoneNumber = phoneNumber.replace(" ", "");
+            phoneNumber = phoneNumber.replace("-", "");
             if (phoneNumber.length() > 8) {
-                phoneNumber = phoneNumber.replace(" ", "");
-                phoneNumber = phoneNumber.replace("-", "");
                 String numb = phoneNumber.substring(phoneNumber.length() - 8);
-
                 phoneList.add(numb);
                 phoneMap.put(numb, name);
                 SharedPrefs.setPhoneContactsName(phoneMap);
             }
-
         }
         phones.close();
         if (phoneList.size() > 0) {

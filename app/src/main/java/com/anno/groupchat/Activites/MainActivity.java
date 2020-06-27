@@ -30,8 +30,10 @@ import com.anno.groupchat.Activites.UserManagement.EditProfile;
 import com.anno.groupchat.Activites.UserManagement.ListOfUsers;
 import com.anno.groupchat.Adapter.ChatListAdapter;
 import com.anno.groupchat.Models.GroupModel;
+import com.anno.groupchat.Models.MessageModel;
 import com.anno.groupchat.Models.UserModel;
 import com.anno.groupchat.R;
+import com.anno.groupchat.Utils.Constants;
 import com.anno.groupchat.Utils.SharedPrefs;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<GroupModel> itemList = new ArrayList<>();
     HashMap<String, GroupModel> groupModelHashMap = new HashMap<>();
     TemplateView template;
+    int messageCount = 0;
 
 
     @Override
@@ -170,36 +173,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    groupModelHashMap.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        GroupModel model = snapshot.getValue(GroupModel.class);
-                        if (model != null) {
-                            if (model.getMembers().containsKey(SharedPrefs.getUserModel().getPhone())) {
-                                groupModelHashMap.put(snapshot.getKey(), model);
-                                updateUnreadMap(snapshot.getKey());
-
+                    if (SharedPrefs.getUserModel() != null) {
+                        groupModelHashMap.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            GroupModel model = snapshot.getValue(GroupModel.class);
+                            if (model != null && model.getMembers() != null) {
+                                if (model.getMembers().containsKey(SharedPrefs.getUserModel().getPhone())) {
+                                    groupModelHashMap.put(snapshot.getKey(), model);
+                                    updateUnreadMap(snapshot.getKey());
+                                }
                             }
                         }
-                    }
-                    itemList = new ArrayList<>(groupModelHashMap.values());
-                    Collections.sort(itemList, new Comparator<GroupModel>() {
-                        @Override
-                        public int compare(GroupModel listData, GroupModel t1) {
-                            Long ob1 = listData.getTime();
-                            Long ob2 = t1.getTime();
-                            return ob2.compareTo(ob1);
+                        itemList = new ArrayList<>(groupModelHashMap.values());
+                        Collections.sort(itemList, new Comparator<GroupModel>() {
+                            @Override
+                            public int compare(GroupModel listData, GroupModel t1) {
+                                Long ob1 = listData.getTime();
+                                Long ob2 = t1.getTime();
+                                return ob2.compareTo(ob1);
 
+                            }
+                        });
+                        SharedPrefs.setHomeList(itemList);
+
+                        adapter.setItemList(itemList);
+                        if (itemList.size() > 0 && itemList.size() < 5) {
+                            showNativeAd();
                         }
-                    });
-                    SharedPrefs.setHomeList(itemList);
 
-                    adapter.setItemList(itemList);
-                    if (itemList.size() > 0 && itemList.size() < 5) {
-                        showNativeAd();
+                        getInsideMessagesFromServer();
+                    } else {
+                        itemList = new ArrayList<>();
+                        adapter.setItemList(itemList);
                     }
-                } else {
-                    itemList = new ArrayList<>();
-                    adapter.setItemList(itemList);
                 }
             }
 
@@ -210,6 +216,61 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //
+    }
+
+    private void getInsideMessagesFromServer() {
+        messageCount = 0;
+        if (itemList != null && itemList.size() > 0) {
+            getMessages(itemList.get(messageCount).getId());
+
+        }
+    }
+
+    private void getMessages(final String groupId) {
+        mDatabase.child("Chats").child(SharedPrefs.getUserModel().getPhone()).child(groupId).limitToLast(50).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HashMap<String, MessageModel> messagesMap = new HashMap<>();
+                if (dataSnapshot.getValue() != null) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        MessageModel messageModel = snapshot.getValue(MessageModel.class);
+                        if (messageModel != null) {
+                            messagesMap.put(snapshot.getKey(), messageModel);
+                        }
+                    }
+
+                    ArrayList<MessageModel> messagesList = new ArrayList<>(messagesMap.values());
+                    Collections.sort(messagesList, new Comparator<MessageModel>() {
+                        @Override
+                        public int compare(MessageModel listData, MessageModel t1) {
+                            String ob1 = listData.getId();
+                            String ob2 = t1.getId();
+                            return ob1.compareTo(ob2);
+
+                        }
+                    });
+
+                    SharedPrefs.setInsideMessages(messagesList, groupId);
+                    messageCount++;
+                    if (itemList.size() > 20) {
+                        if (messageCount <= 20) {
+                            getMessages(itemList.get(messageCount).getId());
+                        }
+                    } else {
+                        if (messageCount < itemList.size()) {
+                            getMessages(itemList.get(messageCount).getId());
+                        }
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void updateUnreadMap(String key) {
@@ -290,11 +351,10 @@ public class MainActivity extends AppCompatActivity {
         while (phones.moveToNext()) {
             String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            phoneNumber = phoneNumber.replace(" ", "");
+            phoneNumber = phoneNumber.replace("-", "");
             if (phoneNumber.length() > 8) {
-                phoneNumber = phoneNumber.replace(" ", "");
-                phoneNumber = phoneNumber.replace("-", "");
                 String numb = phoneNumber.substring(phoneNumber.length() - 8);
-
                 phoneList.add(numb);
                 phoneMap.put(numb, name);
 

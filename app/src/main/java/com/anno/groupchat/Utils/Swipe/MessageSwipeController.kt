@@ -21,7 +21,7 @@ import com.shain.messenger.utils.AndroidUtils
  * Created by Shain Singh on 1/5/19.
  */
 class MessageSwipeController(private val context: Context, private val swipeControllerActions: SwipeControllerActions) :
-    ItemTouchHelper.Callback() {
+        ItemTouchHelper.Callback() {
 
     private lateinit var imageDrawable: Drawable
     private lateinit var shareRound: Drawable
@@ -38,15 +38,21 @@ class MessageSwipeController(private val context: Context, private val swipeCont
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         mView = viewHolder.itemView
-        imageDrawable = context.getDrawable(R.drawable.ic_reply_black_24dp)!!
-        shareRound = context.getDrawable(R.drawable.ic_round_shape)!!
+        try {
+            imageDrawable = context.getDrawable(R.drawable.ic_reply_black_24dp)!!
+            shareRound = context.getDrawable(R.drawable.ic_round_shape)!!
+        } catch (e: Exception) {
+
+        }
+//        imageDrawable = context.getDrawable(R.drawable.ic_reply_black_24dp)!!
+//        shareRound = context.getDrawable(R.drawable.ic_round_shape)!!
         return ItemTouchHelper.Callback.makeMovementFlags(ACTION_STATE_IDLE, RIGHT)
     }
 
     override fun onMove(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
     ): Boolean {
         return false
     }
@@ -62,13 +68,13 @@ class MessageSwipeController(private val context: Context, private val swipeCont
     }
 
     override fun onChildDraw(
-        c: Canvas,
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        dX: Float,
-        dY: Float,
-        actionState: Int,
-        isCurrentlyActive: Boolean
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
     ) {
 
         if (actionState == ACTION_STATE_SWIPE) {
@@ -148,8 +154,8 @@ class MessageSwipeController(private val context: Context, private val swipeCont
         if (startTracking) {
             if (!isVibrate && mView.translationX >= convertTodp(100)) {
                 mView.performHapticFeedback(
-                    HapticFeedbackConstants.KEYBOARD_TAP,
-                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                        HapticFeedbackConstants.KEYBOARD_TAP,
+                        HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
                 )
                 isVibrate = true
             }
@@ -163,20 +169,20 @@ class MessageSwipeController(private val context: Context, private val swipeCont
 
         val y = (mView.top + mView.measuredHeight / 2).toFloat()
         shareRound.colorFilter =
-            PorterDuffColorFilter(ContextCompat.getColor(context, R.color.colorE), PorterDuff.Mode.MULTIPLY)
+                PorterDuffColorFilter(ContextCompat.getColor(context, R.color.colorE), PorterDuff.Mode.MULTIPLY)
 
         shareRound.setBounds(
-            (x - convertTodp(18) * scale).toInt(),
-            (y - convertTodp(18) * scale).toInt(),
-            (x + convertTodp(18) * scale).toInt(),
-            (y + convertTodp(18) * scale).toInt()
+                (x - convertTodp(18) * scale).toInt(),
+                (y - convertTodp(18) * scale).toInt(),
+                (x + convertTodp(18) * scale).toInt(),
+                (y + convertTodp(18) * scale).toInt()
         )
         shareRound.draw(canvas)
         imageDrawable.setBounds(
-            (x - convertTodp(12) * scale).toInt(),
-            (y - convertTodp(11) * scale).toInt(),
-            (x + convertTodp(12) * scale).toInt(),
-            (y + convertTodp(10) * scale).toInt()
+                (x - convertTodp(12) * scale).toInt(),
+                (y - convertTodp(11) * scale).toInt(),
+                (x + convertTodp(12) * scale).toInt(),
+                (y + convertTodp(10) * scale).toInt()
         )
         imageDrawable.draw(canvas)
         shareRound.alpha = 255

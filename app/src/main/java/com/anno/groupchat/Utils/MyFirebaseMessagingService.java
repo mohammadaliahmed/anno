@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.anno.groupchat.Activites.MainActivity;
 import com.anno.groupchat.Activites.SingleChatScreen;
+import com.anno.groupchat.Activites.Splash;
 import com.anno.groupchat.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -58,10 +59,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             type = map.get("Type");
             Id = map.get("Id");
             Name = map.get("Name");
-            handleNow(title, message, type);
-//            if (type.equalsIgnoreCase("chat")) {
-//                sendMessage();
-//            }
+            if (SharedPrefs.getUserModel() != null) {
+                if (SingleChatScreen.isChatScreenOn) {
+                    if (!Constants.GROUP_ID.equalsIgnoreCase(Id)) {
+                        handleNow(title, message, type);
+                    }
+                } else {
+                    handleNow(title, message, type);
+                }
+
+            }
 
 
         }
@@ -90,7 +97,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         /**Creates an explicit intent for an Activity in your app**/
         Intent resultIntent = null;
-        resultIntent = new Intent(this, MainActivity.class);
 
         if (type.equalsIgnoreCase("chat")) {
             HashMap<String, Boolean> map = SharedPrefs.getUnreadMessages();
@@ -101,28 +107,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 map = new HashMap<>();
                 map.put(Id, true);
                 SharedPrefs.setUnreadMessages(map);
-
             }
-
             resultIntent = new Intent(this, SingleChatScreen.class);
-            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            resultIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             resultIntent.putExtra("groupId", Id);
             resultIntent.putExtra("groupName", Name);
 
             sendMessage();
+        } else {
+            resultIntent = new Intent(this, Splash.class);
+
         }
 
-        //        else if (type.equalsIgnoreCase(Constants.NOTIFICATION_CHAT)) {
-//
-//            resultIntent = new Intent(this, ChattingScreen.class);
-//            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//            resultIntent.putExtra("roomId", Integer.parseInt(Id));
-
-//
-//        }
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this,
                 0 /* Request code */, resultIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_CANCEL_CURRENT);
 
         mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.mipmap.ic_launcher);

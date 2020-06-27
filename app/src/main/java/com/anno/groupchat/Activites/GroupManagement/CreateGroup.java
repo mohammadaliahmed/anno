@@ -67,7 +67,7 @@ public class CreateGroup extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-getSupportActionBar().setElevation(0);
+            getSupportActionBar().setElevation(0);
         }
         getPermissions();
         this.setTitle("Create group");
@@ -142,6 +142,7 @@ getSupportActionBar().setElevation(0);
     }
 
     public void putPictures(String path) {
+        create.setEnabled(false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         CommonUtils.showToast("Uploading Image");
         String imgName = Long.toHexString(Double.doubleToLongBits(Math.random()));
@@ -183,6 +184,7 @@ getSupportActionBar().setElevation(0);
     }
 
     private void createGroup() {
+        create.setEnabled(false);
         ListOfUsers.selectedMap.put(SharedPrefs.getUserModel().getPhone(), SharedPrefs.getUserModel().getPhone());
         final String key = mDatabase.push().getKey();
         GroupModel model = new GroupModel(key,

@@ -1,6 +1,8 @@
 package com.anno.groupchat.Activites;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -67,6 +69,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -123,17 +126,20 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     StorageReference mStorageRef;
     int uploadedCount = 0;
     ImageView replyImage, memes;
+    public static boolean isChatScreenOn = false;
 
 
     @Override
     protected void onResume() {
         super.onResume();
+        isChatScreenOn = true;
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("memeShare"));
     }
 
     @Override
     protected void onPause() {
+        isChatScreenOn = false;
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         } catch (Exception e) {
@@ -174,9 +180,11 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
         Constants.GROUP_ID = groupId;
         groupNameTv.setText(groupName);
 
+        cancelAllNotifications();
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        adView.loadAd(adRequest);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -271,7 +279,24 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
 
         getGroupDetails();
         setupRecyclerView();
+        KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
+            @Override
+            public void onToggleSoftKeyboard(boolean isVisible) {
+                recyclerview.scrollToPosition(messagesList.size() - 1);
 
+            }
+        });
+
+    }
+
+    private void cancelAllNotifications() {
+        HashMap<String, Boolean> map = SharedPrefs.getUnreadMessages();
+        if (map != null && map.size() > 0) {
+            ArrayList<String> lsit = new ArrayList<>(map.keySet());
+            for (String i : lsit) {
+                cancelNotification(i);
+            }
+        }
     }
 
     private void setupMemesLayout() {
@@ -439,7 +464,7 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     }
 
     private void getMessagesFromServer() {
-        mDatabase.child("Chats").child(SharedPrefs.getUserModel().getPhone()).child(groupId).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("Chats").child(SharedPrefs.getUserModel().getPhone()).child(groupId).limitToLast(50).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 messagesMap.clear();
@@ -515,13 +540,16 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     }
 
     private void getMembersFromServer(String phone) {
+        membersList.clear();
         mDatabase.child("Users").child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     UserModel model = dataSnapshot.getValue(UserModel.class);
                     if (model != null) {
-                        membersList.add(model);
+                        if (!model.getFcmKey().equalsIgnoreCase("")) {
+                            membersList.add(model);
+                        }
                     }
                 }
             }
@@ -789,5 +817,17 @@ public class SingleChatScreen extends AppCompatActivity implements NotificationO
     @Override
     public void onFailure() {
 
+    }
+
+    public void cancelNotification(String notificationId) {
+        int num = 0;
+        for (int i = 0; i < notificationId.length(); i++) {
+            num = num + (notificationId.charAt(i));
+
+        }
+
+        String ns = NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
+        nMgr.cancel(num);
     }
 }

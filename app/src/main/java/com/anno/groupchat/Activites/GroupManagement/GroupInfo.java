@@ -86,6 +86,13 @@ public class GroupInfo extends AppCompatActivity {
     boolean canEdit;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        getGroupDetails();
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
@@ -156,7 +163,6 @@ public class GroupInfo extends AppCompatActivity {
             }
         });
 
-        getGroupDetails();
         pickImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -301,6 +307,7 @@ public class GroupInfo extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         CommonUtils.showToast("Successfully removed");
+                        getGroupDetails();
 
                     }
                 });
@@ -372,7 +379,7 @@ public class GroupInfo extends AppCompatActivity {
     }
 
     private void getGroupDetails() {
-        mDatabase.child("Groups").child(groupId).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("Groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
@@ -414,7 +421,7 @@ public class GroupInfo extends AppCompatActivity {
                         }
                         membersList.clear();
                         phoneListt.clear();
-                        if (groupModel.getMembers().size() > 2) {
+                        if (groupModel.getMembers() != null && groupModel.getMembers().size() > 1) {
                             for (String phone : groupModel.getMembers().values()) {
                                 getMembersFromServer(phone);
                             }

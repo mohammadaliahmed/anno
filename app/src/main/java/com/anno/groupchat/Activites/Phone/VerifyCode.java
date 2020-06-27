@@ -80,7 +80,7 @@ public class VerifyCode extends AppCompatActivity {
         validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                checkUser();
+//                checkUser(); test
 
                 if (!pin.getValue().equalsIgnoreCase("")) {
                     wholeLayout.setVisibility(View.VISIBLE);
@@ -109,22 +109,7 @@ public class VerifyCode extends AppCompatActivity {
                 }
 
 
-//                if (!pin.getValue().equalsIgnoreCase("")) {
-//                    if (smsCode != null) {
-//                        if (smsCode.equalsIgnoreCase(pin.getValue())) {
-//                            checkUser();
-//                            CommonUtils.showToast("Verified");
-//                            SharedPrefs.setPhone(phoneNumber);
 //
-//                        } else {
-//                            CommonUtils.showToast("Wrong Pin");
-//                        }
-//                    } else {
-//                        CommonUtils.showToast("Wrong Pin");
-//                    }
-//                } else {
-//                    CommonUtils.showToast("Enter Pin");
-//                }
             }
         });
 
@@ -205,7 +190,9 @@ public class VerifyCode extends AppCompatActivity {
                     @Override
                     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                         smsCode = phoneAuthCredential.getSmsCode();
-                        pin.setValue(phoneAuthCredential.getSmsCode());
+                        if (phoneAuthCredential.getSmsCode() != null) {
+                            pin.setValue(phoneAuthCredential.getSmsCode());
+                        }
 
 
                     }

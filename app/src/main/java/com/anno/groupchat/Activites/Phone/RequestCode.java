@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.anno.groupchat.R;
+import com.anno.groupchat.Utils.CommonUtils;
+import com.anno.groupchat.Utils.ConnectivityManager;
 import com.rilixtech.Country;
 import com.rilixtech.CountryCodePicker;
 
@@ -42,14 +44,18 @@ public class RequestCode extends AppCompatActivity {
                 } else if (phone.getText().length() < 10 || phone.getText().length() > 12) {
                     phone.setError("Enter valid phone number");
                 } else {
-                    requestCode();
+                    if (ConnectivityManager.isNetworkConnected(RequestCode.this)) {
+                        requestCode();
+                    } else {
+                        CommonUtils.showToast("Please check your internet connection");
+                    }
                 }
             }
         });
         ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
             public void onCountrySelected(Country selectedCountry) {
-                foneCode = "+"+selectedCountry.getPhoneCode();
+                foneCode = "+" + selectedCountry.getPhoneCode();
                 countryName.setText("(" + selectedCountry.getName() + ")");
             }
         });
